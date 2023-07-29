@@ -47,9 +47,7 @@ get_pkgbuild()
     fi
 }
 
-
-
 echo "Pulling PKGBUILD for $package ..."
 get_pkgbuild
-rm -rf "$package/.git"
+rm -rf "$package/.git" "$package/.SRCINFO"
 echo "Done."

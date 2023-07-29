@@ -1,0 +1,6 @@
+src
+pkg
+*.pkg.tar*
+binutils-gdb
+/linux-api-headers/*.xz
+/linux-api-headers/*.sign
