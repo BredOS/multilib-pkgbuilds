@@ -72,7 +72,16 @@ def lists() -> list:
                                 aurname = pkname(f"./1-repo/{j}/desc")
                                 if aurname == pkgname or (
                                     pkgname in conf.alias
-                                    and aurname in conf.alias[pkgname]
+                                    and (
+                                        (
+                                            isinstance(conf.alias[pkgname], list)
+                                            and aurname in conf.alias[pkgname]
+                                        )
+                                        or (
+                                            isinstance(conf.alias[pkgname], str)
+                                            and aurname == conf.alias[pkgname]
+                                        )
+                                    )
                                 ):
                                     aurver = pkver(f"./1-repo/{j}/desc")
                                     break
