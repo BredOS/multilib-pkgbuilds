@@ -4,4 +4,9 @@ pkg
 binutils-gdb
 /linux-api-headers/*.xz
 /linux-api-headers/*.sign
+lists.log
+0-repo
+1-repo
+__pycache__
 /gcc/gcc
+
