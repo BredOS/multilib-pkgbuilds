@@ -9,28 +9,41 @@ import conf
 
 
 def pkname(fp):
+    """
+    Find the pkgname off of a desc file.
+    """
     res = None
-    with open(fp) as f:
-        lines = f.readlines()
-        inc = 0
-        while lines[inc] != "%NAME%\n":
-            inc += 1
-        res = lines[inc + 1][:-1]
+    try:
+        with open(fp) as f:
+            lines = f.readlines()
+            inc = 0
+            while lines[inc] != "%NAME%\n":
+                inc += 1
+            res = lines[inc + 1][:-1]
+    except:
+        pass
     return res
 
 
 def pkver(fp):
+    """
+    Find the pkgversion off of a desc file.
+    """
     res = None
-    with open(fp) as f:
-        lines = f.readlines()
-        inc = 0
-        while lines[inc] != "%VERSION%\n":
-            inc += 1
-        res = lines[inc + 1][:-1]
+    try:
+        with open(fp) as f:
+            lines = f.readlines()
+            inc = 0
+            while lines[inc] != "%VERSION%\n":
+                inc += 1
+            res = lines[inc + 1][:-1]
+    except:
+        pass
     return res
 
 
 def download() -> None:
+    # Download all package lists
     foldern = 0
     for i in conf.repos:
         mkdir(str(foldern) + "-repo")
@@ -45,6 +58,7 @@ def download() -> None:
 
 
 def clean() -> None:
+    # Remove all local lists
     for i in listdir():
         if i.endswith("-repo"):
             if conf.debug:
@@ -53,6 +67,10 @@ def clean() -> None:
 
 
 def lists() -> list:
+    """
+    Use this function to generate a list of updatable packages.
+    A log is also always generated at ./lists.log
+    """
     res = list()
     with open("lists.log", "w") as logf:
         try:
@@ -66,6 +84,8 @@ def lists() -> list:
                     pkgname = pkname(f"./0-repo/{i}/desc")
                     repover = pkver(f"./0-repo/{i}/desc")
                     aurver = None  # Can remain None
+                    if pkgname is None or repover is None:
+                        raise RuntimeError("Package unparsable!!")
                     if pkgname not in conf.ignore:
                         for j in dr1:
                             if j[:2] == i[:2]:
