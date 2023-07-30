@@ -4,3 +4,4 @@ pkg
 binutils-gdb
 /linux-api-headers/*.xz
 /linux-api-headers/*.sign
+/gcc/gcc

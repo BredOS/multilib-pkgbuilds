@@ -7,4 +7,4 @@ for opt; do
 	    exit 1;;
   esac
 done
-exec gcc $fl ${1+"$@"}
+exec armv7h-linux-gnueabihf-gcc $fl ${1+"$@"}
