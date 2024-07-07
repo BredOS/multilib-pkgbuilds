@@ -1,0 +1,33 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 74b48d1..eb864ee 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -40,9 +40,8 @@ prepare() {
+ 
+ build() {
+   cd ${_pkgname}-${pkgver}
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
+-  export ASMFLAGS="-m32"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
+   export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+ 
+   export CFLAGS+=' -ffat-lto-objects'
+@@ -52,6 +51,7 @@ build() {
+     -DCMAKE_BUILD_TYPE=None \
+     -DCMAKE_INSTALL_PREFIX=/usr \
+     -DCMAKE_INSTALL_LIBDIR=lib32 \
++    -DCMAKE_INSTALL_INCLUDEDIR=include32 \
+     -DZSTD_BUILD_CONTRIB=ON \
+     -DZSTD_BUILD_STATIC=OFF \
+     -DZSTD_BUILD_TESTS=ON \
+@@ -68,7 +68,7 @@ check() {
+ package() {
+   cd ${_pkgname}-${pkgver}
+   DESTDIR="${pkgdir}" cmake --install build
+-  rm -rf "${pkgdir}"/usr/{share,include,bin}
++  rm -rf "${pkgdir}"/usr/{share,bin}
+   install -Dm 644 LICENSE -t "${pkgdir}/usr/share/licenses/${pkgname}"
+ }
+ 

@@ -1,0 +1,28 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index d58739c..ef90e78 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -44,13 +44,14 @@ prepare() {
+ }
+ 
+ build() {
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
+   export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+ 
+   local _meson_options=(
+     --libexecdir /usr/lib32
+     --libdir     /usr/lib32
++    --includedir /usr/include32
+ 
+     --auto-features disabled
+ 
+@@ -72,5 +73,5 @@ build() {
+ package() {
+   DESTDIR="${pkgdir}" meson install -C build
+ 
+-  rm -rf "${pkgdir}"/usr/{bin,include,share}
++  rm -rf "${pkgdir}"/usr/{bin,share}
+ }

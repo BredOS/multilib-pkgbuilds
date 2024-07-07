@@ -1,0 +1,29 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index c5c036c..c6b4b0d 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -25,12 +25,13 @@ prepare() {
+ build() {
+   cd xz
+ 
+-  export CC='gcc -m32'
+-  export PKG_CONFIG='i686-pc-linux-gnu-pkg-config'
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export PKG_CONFIG='armv7h-linux-gnueabihf-pkg-config'
+ 
+   ./configure \
+     --prefix=/usr \
+     --libdir=/usr/lib32 \
++    --includedir=/usr/include32 \
+     --disable-rpath \
+     --enable-werror
+   make
+@@ -47,7 +48,7 @@ package() {
+ 
+   make DESTDIR="${pkgdir}" install
+ 
+-  rm -rf "${pkgdir}"/usr/{bin,include,share}
++  rm -rf "${pkgdir}"/usr/{bin,share}
+   install -d -m0755 "${pkgdir}"/usr/share/licenses
+   ln -s xz "${pkgdir}"/usr/share/licenses/lib32-xz
+ }

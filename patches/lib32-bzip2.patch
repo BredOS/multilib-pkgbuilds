@@ -1,0 +1,23 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 1bd05b6..2828456 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -18,14 +18,16 @@ validpgpkeys=('EC3CFE88F6CA0788774F5C1D1AA44BE649DE760A') # Mark Wielaard <mark@
+ build() {
+   cd ${_pkgbasename}-${pkgver}
+  
+-  make -f Makefile-libbz2_so CC="gcc -m32 $CFLAGS $LDFLAGS"
+-  make libbz2.a CC="gcc -m32 $CFLAGS $LDFLAGS"
++  make -f Makefile-libbz2_so CC="armv7h-linux-gnueabihf-gcc $CFLAGS $LDFLAGS"
++  make libbz2.a CC="armv7h-linux-gnueabihf-gcc $CFLAGS $LDFLAGS"
+ }
+ 
+ package(){
+   cd ${_pkgbasename}-${pkgver}
+ 
+   install -dm755 "$pkgdir"/usr/lib32
++  install -dm755 "$pkgdir"/usr/include32
++  cp -a bzlib.h "$pkgdir"/usr/include32
+   cp -a libbz2.so* "$pkgdir"/usr/lib32
+   ln -s libbz2.so.$pkgver "$pkgdir"/usr/lib32/libbz2.so
+   ln -s libbz2.so.$pkgver "$pkgdir"/usr/lib32/libbz2.so.1 # For compatibility with some other distros

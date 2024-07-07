@@ -1,3 +1,4 @@
+#! /usr/bin/python
 from subprocess import check_output
 from time import sleep
 import urllib.request
@@ -153,3 +154,7 @@ def lists() -> list:
     if conf.debug:
         print(f"Updates result table: {res}")
     return res
+
+
+if __name__ == "__main__":
+    print(lists())

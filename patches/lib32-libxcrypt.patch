@@ -1,0 +1,45 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 0ed58b0..3ebb935 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -16,7 +16,7 @@ sha256sums=('e5e1f4caee0a01de2aee26e3138807d6d3ca2b8e67287966d1fefd65e1fd8943'
+             'SKIP')
+ 
+ build() {
+-  export CC="gcc -m32"
++  export CC="armv7h-linux-gnueabihf-gcc"
+   export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+ 
+   mkdir build-libxcrypt build-libxcrypt-compat
+@@ -25,6 +25,7 @@ build() {
+     --prefix=/usr \
+     --libdir=/usr/lib32 \
+     --libexecdir=/usr/lib32 \
++    --includedir=/usr/include32 \
+     --disable-static \
+     --enable-hashes=strong,glibc \
+     --enable-obsolete-api=no \
+@@ -36,6 +37,7 @@ build() {
+     --prefix=/usr \
+     --libdir=/usr/lib32 \
+     --libexecdir=/usr/lib32 \
++    --includedir=/usr/include32 \
+     --disable-static \
+     --enable-hashes=strong,glibc \
+     --enable-obsolete-api=glibc \
+@@ -48,7 +50,7 @@ package_lib32-libxcrypt() {
+ 
+   make DESTDIR="${pkgdir}" install
+ 
+-  rm -rf "${pkgdir}"/usr/{bin,include,share}
++  rm -rf "${pkgdir}"/usr/{bin,share}
+ }
+ 
+ package_lib32-libxcrypt-compat() {
+@@ -57,5 +59,5 @@ package_lib32-libxcrypt-compat() {
+   
+   cd build-libxcrypt-compat/
+   make DESTDIR="${pkgdir}" install
+-  rm -rf "${pkgdir}"/usr/{include,lib32/{lib*.so,pkgconfig},share}
++  rm -rf "${pkgdir}"/usr/{include32,lib32/{lib*.so,pkgconfig},share}
+ }

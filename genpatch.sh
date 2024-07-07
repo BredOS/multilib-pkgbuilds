@@ -11,12 +11,14 @@ newpkgbuild=$(realpath "$1")
 
 generate_patch()
 {
-    tempdir=$(mktemp -d -p "$working_dir")
-    cd "$tempdir"
-    pkgctl repo clone "$pkgname"
-    rm -rf "$pkgname/.git"
-    diff -Naur "./$pkgname" "../$pkgname" > "$working_dir/patches/$pkgname.patch"
-    rm -rf "$tempdir"
+    # tempdir=$(mktemp -d -p "$working_dir")
+    # cd "$tempdir"
+    # pkgctl repo clone "$pkgname"
+    # rm -rf "$pkgname/.git"
+    # diff -Naur "./$pkgname" "../$pkgname" > "$working_dir/patches/$pkgname.patch"
+    # rm -rf "$tempdir"
+    cd "$pkgname"
+    git diff > "$working_dir/patches/$pkgname.patch"
 }
 
-generate_patch "$newpkgbuild"
+generate_patch 

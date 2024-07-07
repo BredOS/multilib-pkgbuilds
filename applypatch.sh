@@ -4,4 +4,6 @@
 
 # Usage example: applypatch.sh <patch file> 
 
-patch  -p1 < "$1"
+script_dir=$(realpath $(dirname "$0"))
+
+patch  -p1 < "$script_dir/patches/$1.patch"
