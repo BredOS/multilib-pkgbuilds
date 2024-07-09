@@ -1,0 +1,38 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 27e1069..d3a63e6 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -9,7 +9,7 @@ arch=(x86_64)
+ url="https://www.gnupg.org"
+ license=('LGPL')
+ depends=('lib32-libgpg-error' $_pkgbasename)
+-makedepends=(gcc-multilib libtool-multilib)
++makedepends=(gcc-multilib)
+ source=(https://gnupg.org/ftp/gcrypt/${_pkgbasename}/${_pkgbasename}-${pkgver}.tar.bz2{,.sig})
+ sha1sums=('dd2c68e0685bb99249efeeb06046fae15b5214ba'
+           'SKIP')
+@@ -31,14 +31,14 @@ prepare() {
+ }
+ 
+ build() {
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
+   export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+ 
+   cd ${_pkgbasename}-${pkgver}
+ 
+   ./configure --prefix=/usr --disable-static --disable-padlock-support \
+-              --libdir=/usr/lib32 --enable-shared
++              --libdir=/usr/lib32 --enable-shared --includedir=/usr/include32 --target=armv7h-linux-gnueabihf --host=armv7h-linux-gnueabihf
+   make
+ }
+ 
+@@ -46,5 +46,5 @@ package() {
+   cd ${_pkgbasename}-${pkgver}
+ 
+   make DESTDIR="${pkgdir}" install
+-  rm -rf "${pkgdir}"/usr/{include,share,bin,sbin}
++  rm -rf "${pkgdir}"/usr/{share,bin,sbin}
+ }

@@ -1,0 +1,33 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index af67e08..c12c53c 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -59,7 +59,7 @@ prepare() {
+ 
+ build() {
+   local meson_options=(
+-    --cross-file lib32
++    --cross-file arm-lib32
+     -D glib_debug=disabled
+     -D documentation=false
+     -D introspection=disabled
+@@ -73,8 +73,8 @@ build() {
+   CXXFLAGS+=" -g3"
+ 
+   # Avoid crashing some old binaries
+-  CFLAGS+=" -mstackrealign"
+-  CXXFLAGS+=" -mstackrealign"
++  #CFLAGS+=" -mstackrealign"
++  #CXXFLAGS+=" -mstackrealign"
+ 
+   arch-meson glib build "${meson_options[@]}"
+   meson compile -C build
+@@ -93,7 +93,7 @@ package_lib32-glib2() {
+ 
+   meson install -C build --destdir "$pkgdir"
+ 
+-  rm -r "$pkgdir"/usr/{lib,share,include}
++  rm -r "$pkgdir"/usr/{lib,share}
+   find "$pkgdir/usr/bin" -type f -not -name gio-querymodules -printf 'Removing %P\n' -delete
+   mv "$pkgdir"/usr/bin/gio-querymodules{,-32}
+ 

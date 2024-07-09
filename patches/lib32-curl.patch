@@ -1,0 +1,28 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 747da43..abe8207 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -61,12 +61,13 @@ prepare() {
+ }
+ 
+ build() {
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
+   export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+ 
+   local _configure_options=(
+     --prefix='/usr'
++    --includedir='/usr/include32'
+     --disable-dependency-tracking
+     --disable-ldap
+     --disable-ldaps
+@@ -126,6 +127,7 @@ package_lib32-curl() {
+   cd "${srcdir}"/build-curl
+ 
+   make -C lib DESTDIR="${pkgdir}" install
++  make -C include DESTDIR="${pkgdir}" install
+   make DESTDIR="${pkgdir}" install-pkgconfigDATA
+ 
+   # license

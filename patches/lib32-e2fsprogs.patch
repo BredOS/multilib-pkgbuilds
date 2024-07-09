@@ -1,0 +1,32 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index d697377..2fde925 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -21,8 +21,8 @@ sha256sums=('5a33dc047fd47284bca4bb10c13cfe7896377ae3d01cb81a05d406025d99e0d1'
+             'SKIP')
+ 
+ build() {
+-  export CC='gcc -m32'
+-  export CXX='g++ -m32'
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
+   export PKG_CONFIG_PATH='/usr/lib32/pkgconfig'
+ 
+   cd "${srcdir}/e2fsprogs-${pkgver}"
+@@ -30,6 +30,7 @@ build() {
+   ./configure \
+     --prefix='/usr' \
+     --libdir='/usr/lib32' \
++    --includedir='/usr/include32' \
+     --with-root-prefix='' \
+     --enable-elf-shlibs \
+     --disable-{debugfs,imager,resizer,fsck,uuidd,libuuid,libblkid}
+@@ -41,7 +42,7 @@ package() {
+ 
+   make DESTDIR="${pkgdir}" install-libs
+ 
+-  rm -rf "${pkgdir}"/usr/{bin,include,share}
++  rm -rf "${pkgdir}"/usr/{bin,share}
+   mkdir -p "${pkgdir}"/usr/share/licenses
+   ln -s e2fsprogs "${pkgdir}/usr/share/licenses/${pkgname}"
+ }

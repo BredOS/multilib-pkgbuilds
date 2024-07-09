@@ -1,0 +1,29 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 3a802a5..cf37aa4 100755
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -17,12 +17,13 @@ sha256sums=('e87aae032bf07c26f85ac0ed3250998c37621d95f8bd748b31f15b33c45ee995')
+ build() {
+   cd flex-${pkgver}
+ 
+-  export CC='gcc -m32'
+-  export CXX='g++ -m32'
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
+   export PKG_CONFIG_PATH='/usr/lib32/pkgconfig'
+ 
+   ./configure \
+     --prefix='/usr' \
++    --includedir='/usr/include32' \
+     --libdir='/usr/lib32'
+   make
+ }
+@@ -31,7 +32,7 @@ package() {
+   cd flex-${pkgver}
+ 
+   make DESTDIR="${pkgdir}" install
+-  rm -rf "${pkgdir}"/usr/{include,share,bin}
++  rm -rf "${pkgdir}"/usr/{share,bin}
+ 
+   install -dm 755 "${pkgdir}"/usr/share/licenses
+   ln -s flex "${pkgdir}"/usr/share/licenses/lib32-flex

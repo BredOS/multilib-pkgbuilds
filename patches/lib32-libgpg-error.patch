@@ -1,0 +1,27 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 86ffffa..56e0900 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -25,12 +25,12 @@ prepare() {
+ }
+ 
+ build() {
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
+   export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+ 
+   cd "${srcdir}"/${_pkgbasename}-${pkgver}
+-  ./configure --prefix=/usr --libdir=/usr/lib32
++  ./configure --prefix=/usr --libdir=/usr/lib32 --includedir=/usr/include32
+   make
+ }
+ 
+@@ -43,5 +43,5 @@ package() {
+   cd "${srcdir}"/${_pkgbasename}-${pkgver}
+   make DESTDIR="${pkgdir}/" install
+ 
+-  rm -rf "${pkgdir}"/usr/{include,share,bin}
++  rm -rf "${pkgdir}"/usr/{share,bin}
+ }

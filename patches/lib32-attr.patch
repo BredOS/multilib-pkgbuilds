@@ -1,0 +1,27 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 5e30862..a7f406c 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -21,13 +21,14 @@ sha256sums=('f2e97b0ab7ce293681ab701915766190d607a1dba7fae8a718138150b700a70b'
+ build() {
+   cd "${srcdir}"/attr-${pkgver}
+ 
+-  export CC="gcc -m32"
++  export CC="armv7h-linux-gnueabihf-gcc"
+   export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+ 
+   ./configure \
+     --prefix=/usr \
+     --libdir=/usr/lib32 \
+     --libexecdir=/usr/lib32 \
++    --includedir=/usr/include32 \
+     --sysconfdir=/etc
+   make
+ }
+@@ -37,5 +38,5 @@ package() {
+ 
+   make DESTDIR="${pkgdir}" install
+ 
+-  rm -rf "${pkgdir}"/{etc,usr/{bin,include,share}}
++  rm -rf "${pkgdir}"/{etc,usr/{bin,share}}
+ }

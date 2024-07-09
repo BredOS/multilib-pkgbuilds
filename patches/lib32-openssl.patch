@@ -1,0 +1,38 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 2143ca8..acf485b 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -30,17 +30,17 @@ prepare() {
+ }
+ 
+ build() {
+-	export CC="gcc -m32"
+-	export CXX="g++ -m32"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
+ 	export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+ 
+ 	cd "$srcdir"/$_pkgbasename-$pkgver
+ 
+-	./Configure --prefix=/usr --openssldir=/etc/ssl --libdir=lib32 \
+-		shared enable-ktls linux-elf
++	./Configure --prefix=/usr --openssldir=/etc/ssl --libdir=lib32 linux-generic32 no-asm \
++		shared enable-ktls 
+ 
+ 	make MAKEDEPPROG="${CC}" depend
+-	make
++	make CC="${CC}"
+ }
+ 
+ check() {
+@@ -57,6 +57,8 @@ check() {
+ package() {
+ 	cd "$srcdir"/$_pkgbasename-$pkgver
+ 	make DESTDIR="$pkgdir" install_sw
+-
+-	rm -r "$pkgdir"/usr/{include,bin}
++	mv -v "$pkgdir"/usr/include "$pkgdir"/usr/include32
++	# Fixup the PC file to use /usr/include32
++	sed -i 's|/usr/include|/usr/include32|' "$pkgdir"/usr/lib32/pkgconfig/*.pc
++	rm -r "$pkgdir"/usr/bin
+ }

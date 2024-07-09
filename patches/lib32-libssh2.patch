@@ -1,0 +1,29 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index e607d5e..bd2d1f5 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -20,12 +20,12 @@ sha512sums=('ef85e152dc252bd9b1c05276972b9c22313f5d492743dde090235742746d67f634f
+             'SKIP')
+ 
+ build() {
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
+   export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+ 
+   cd ${_pkgbasename}-${pkgver}
+-  ./configure --prefix=/usr --libdir=/usr/lib32
++  ./configure --prefix=/usr --libdir=/usr/lib32 --includedir=/usr/include32
+   make
+ }
+ 
+@@ -33,7 +33,7 @@ package() {
+   cd ${_pkgbasename}-${pkgver}
+   make DESTDIR="${pkgdir}" install
+ 
+-  rm -rf "${pkgdir}"/usr/{include,share,bin,sbin}
++  rm -rf "${pkgdir}"/usr/{share,bin,sbin}
+   mkdir -p "$pkgdir/usr/share/licenses"
+   ln -s $_pkgbasename "$pkgdir/usr/share/licenses/$pkgname"
+ }

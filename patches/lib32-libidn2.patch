@@ -1,0 +1,31 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index cf4746b..26469d0 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -23,13 +23,14 @@ prepare() {
+ 
+ build() {
+   cd libidn2-${pkgver}
+-  export CC='gcc -m32'
+-  export CXX='g++ -m32'
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
+   export PKG_CONFIG_PATH='/usr/lib32/pkgconfig'
+   ./configure \
+     --prefix=/usr \
++    --includedir=/usr/include32 \
+     --libdir=/usr/lib32
+-  make
++  make -j$(nproc)
+ }
+ 
+ check() {
+@@ -39,7 +40,7 @@ check() {
+ package() {
+   cd libidn2-${pkgver}
+   make DESTDIR="${pkgdir}" install
+-  rm -rf "${pkgdir}"/usr/{bin,include,share}
++  rm -rf "${pkgdir}"/usr/{bin,share}
+ }
+ 
+ # vim: ts=2 sw=2 et:

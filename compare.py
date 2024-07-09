@@ -129,6 +129,14 @@ def lists() -> list:
                                     logf.write(
                                         f'Package "{pkgname}" is ahead of repo! "{repover}" < "{aurver}"\n'
                                     )
+                            elif int(compare) == int(0):
+                                if conf.debug:
+                                    print(
+                                        f'\033[32mPackage \033[0m"{pkgname}" \033[32mis up-to-date!\033[0m'
+                                    )
+                                    logf.write(
+                                        f'Package "{pkgname}" is up-to-date!\n'
+                                    )
                         else:
                             if conf.debug:
                                 print(

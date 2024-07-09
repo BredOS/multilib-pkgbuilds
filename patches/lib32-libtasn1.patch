@@ -1,0 +1,36 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index ca55e23..ab8cd39 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -19,18 +19,19 @@ sha256sums=('1613f0ac1cf484d6ec0ce3b8c06d56263cc7242f1c23b30d82d23de345a63f7a'
+ validpgpkeys=('B1D2BD1375BECB784CF4F8C4D73CF638C53C06BE') # "Simon Josefsson <simon@josefsson.org>"
+ 
+ build() {
+-  export CC='gcc -m32'
+-  export CXX='g++ -m32'
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
+   export PKG_CONFIG_PATH='/usr/lib32/pkgconfig'
+ 
+   cd ${_pkgbase}-${pkgver}
+ 
+   ./configure --prefix=/usr \
+       --libdir=/usr/lib32 \
+-      --with-packager=Archlinux \
+-      --with-packager-bug-reports="https://gitlab.archlinux.org/archlinux/packaging/packages/$pkgname/-/issues" \
++      --includedir=/usr/include32 \
++      --with-packager=BredOS \
++      --with-packager-bug-reports="https://github.com/BredOS/multilib-pkgbuilds/issues" \
+       --with-packager-version=${pkgver}-${pkgrel}
+-  make
++  make -j$(nproc)
+ }
+ 
+ package() {
+@@ -38,5 +39,5 @@ package() {
+ 
+   make DESTDIR="${pkgdir}" install
+ 
+-  rm -rf "${pkgdir}/usr/"{bin,include,share}
++  rm -rf "${pkgdir}/usr/"{bin,share}
+ }

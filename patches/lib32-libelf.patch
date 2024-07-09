@@ -1,0 +1,35 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 371df8c..3746f1e 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -45,11 +45,12 @@ build() {
+     --prefix=/usr
+     --sysconfdir=/etc
+     --libdir=/usr/lib32
++    --includedir=/usr/include32
+     --disable-debuginfod
+   )
+ 
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
+   export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+   # fat-lto-objects is required for non-mangled .a files in libelf
+   CFLAGS+=" -ffat-lto-objects"
+@@ -58,7 +59,7 @@ build() {
+ 
+   cd $_name-$pkgver
+   ./configure "${configure_options[@]}"
+-  make
++  make -j$(nproc)
+ }
+ 
+ check() {
+@@ -68,5 +69,5 @@ check() {
+ package() {
+   make DESTDIR="$pkgdir" install -C $_name-$pkgver
+   # remove anything that would conflict with elfutils and debuginfod
+-  rm -rf "$pkgdir/"{etc,usr/{bin,include,share}}
++  rm -rf "$pkgdir/"{etc,usr/{bin,share}}
+ }

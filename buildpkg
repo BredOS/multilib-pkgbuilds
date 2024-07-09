@@ -7,10 +7,26 @@ set -x
 # patch it using /patches/pkgname.patch
 # build it using makepkg
 
-# Usage function
 usage() {
-    echo "Usage: $0 <package>"
+    echo "Usage: $0 [-g] <package>"
 }
+
+generate_patch=0
+
+# Parse options
+while getopts ":g" opt; do
+  case ${opt} in
+    g )
+      generate_patch=1
+      ;;
+    \? )
+      echo "Invalid option: $OPTARG" 1>&2
+      usage
+      exit 1
+      ;;
+  esac
+done
+shift $((OPTIND -1))
 
 # Check if the package name is empty
 if [ -z "$1" ]; then
@@ -24,7 +40,9 @@ script_dir=$(realpath $(dirname "$0"))
 localpkgs="arm32-binutils|arm32-gcc|arm32-linux-api-headers|arm32-gcc-bootstrap|arm32-filesystem|lib32-glibc"
 # Get the package name
 package="$1"
-
+if [ $generate_patch -eq 1 ]; then
+    "$script_dir"/genpatch "$package"
+fi
 # Make temp dir
 tempdir=$(mktemp -d)
 cd "$tempdir"
@@ -34,9 +52,9 @@ if [[ $package =~ $localpkgs ]]; then
     cp -r "$script_dir"/"$package" .
     cd "$package"
 else
-    "$script_dir"/pullpkg.sh "$package"
+    "$script_dir"/pullpkg "$package"
     cd "$package"
-    "$script_dir"/applypatch.sh "$package"
+    "$script_dir"/applypatch "$package"
 fi
 
 echo "Building $package ..."

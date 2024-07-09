@@ -1,0 +1,31 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 2a00689..9e251ce 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -21,13 +21,14 @@ sha512sums=('5fbb5a0a864db73a6d18cdea7b31237da907fff0ef288f3a8db6ebdba8ef61ad885
+ 
+ build() {
+   cd libunistring-${pkgver}
+-  export CC='gcc -m32'
+-  export CXX='g++ -m32'
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
+   export PKG_CONFIG_PATH='/usr/lib32/pkgconfig'
+   ./configure \
+     --prefix=/usr \
++    --includedir=/usr/include32 \
+     --libdir=/usr/lib32
+-  make
++  make -j$(nproc)
+ }
+ 
+ check() {
+@@ -36,7 +37,7 @@ check() {
+ 
+ package() {
+   make -C libunistring-${pkgver} DESTDIR="${pkgdir}" install
+-  rm -rf "${pkgdir}"/usr/{bin,include,share}
++  rm -rf "${pkgdir}"/usr/{bin,share}
+ }
+ 
+ # vim: ts=2 sw=2 et:

@@ -1,0 +1,26 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index cf38ce7..9813269 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -18,8 +18,8 @@ sha512sums=('1d7fa66cfa46f29e2a0e9c79b69a206986e437900b99c133e0be23bf8ec8f46a230
+ build() {
+   cd "${_pkgbasename}"
+   
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
+   export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+ 
+   sed -i -e 's/^\(USR\)\?LIBDIR\s*:=.*$/\1LIBDIR=\/usr\/lib32/' Makefile
+@@ -29,6 +29,8 @@ build() {
+ package() {
+   cd "${_pkgbasename}"
+   make DESTDIR="$pkgdir" install
+-
+-  rm -rf "${pkgdir}"/{usr/{include,share,bin,sbin},etc,{s,}bin}
++  mv -v "$pkgdir"/usr/include "$pkgdir"/usr/include32
++  # Fixup the PC file to use /usr/include32
++  sed -i 's|/usr/include|/usr/include32|' "$pkgdir"/usr/lib32/pkgconfig/*.pc
++  rm -rf "${pkgdir}"/{usr/{share,bin,sbin},etc,{s,}bin}
+ }

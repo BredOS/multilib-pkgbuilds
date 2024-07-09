@@ -9,6 +9,8 @@ repos = [
 
 ignore = [
     "lib32-libxcrypt-compat",
+    "lib32-libcurl-compat",
+    "lib32-libcurl-gnutls",
 ]
 
 alias = {

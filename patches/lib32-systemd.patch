@@ -1,0 +1,23 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 58a15aa..46f0c40 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -50,8 +50,8 @@ prepare() {
+ }
+ 
+ build() {
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
+   export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+ 
+   local _timeservers=({0..3}.arch.pool.ntp.org)
+@@ -71,6 +71,7 @@ build() {
+   local _meson_options=(
+     --libexecdir	/usr/lib32
+     --libdir		/usr/lib32
++    --cross-file arm-lib32
+ 
+     -Dversion-tag="${_meson_version}-arch"
+     -Dvcs-tag=false
