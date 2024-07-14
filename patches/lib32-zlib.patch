@@ -1,0 +1,29 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 60211ca..9c5336b 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -23,13 +23,12 @@ b2sums=('42d109223801a493de6d52e7343403d7fc3234a6ca816425fe41ac9c18019b01b93841a
+ validpgpkeys=('5ED46A6721D365587791E2AA783FCD8E58BCAFBA') # Mark Adler <madler@alumni.caltech.edu>
+ 
+ build() {
+-  export CFLAGS+=" -m32"
+-  export CXXFLAGS+=" -m32"
+-  export LDFLAGS+=" -m32"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
+   export PKG_CONFIG_PATH='/usr/lib32/pkgconfig'
+ 
+   cd $_name-$pkgver
+-  ./configure --prefix=/usr --libdir=/usr/lib32
++  ./configure --prefix=/usr --libdir=/usr/lib32 --includedir=/usr/include32
+   make
+ }
+ 
+@@ -40,6 +39,6 @@ check() {
+ package() {
+   make install DESTDIR="$pkgdir" -C $_name-$pkgver
+ 
+-  rm -rf "$pkgdir"/usr/{include,share,bin}
++  rm -rf "$pkgdir"/usr/{share,bin}
+   install -vDm 644 $_name-$pkgver/LICENSE -t "$pkgdir/usr/share/licenses/$pkgname/"
+ }

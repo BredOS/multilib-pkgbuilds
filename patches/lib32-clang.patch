@@ -1,0 +1,63 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 486d382..6f04bf6 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -59,27 +59,32 @@ prepare() {
+ build() {
+   cd "$srcdir/clang-$pkgver.src/build"
+ 
+-  export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
++
+ 
+   local cmake_args=(
+     -G Ninja
+     -DCMAKE_BUILD_TYPE=Release
+-    -DCMAKE_INSTALL_PREFIX=/usr
++    -DCMAKE_INSTALL_INCLUDEDIR=/usr/include32
++    -DCMAKE_INSTALL_PREFIX=/usr/armv7h-linux-gnueabihf
+     -DCMAKE_SKIP_RPATH=ON
+     -DCLANG_DEFAULT_PIE_ON_LINUX=ON
+     -DCLANG_LINK_CLANG_DYLIB=ON
+-    -DCMAKE_CXX_FLAGS:STRING=-m32
+-    -DCMAKE_C_FLAGS:STRING=-m32
+     -DENABLE_LINKER_BUILD_ID=ON
+     -DLLVM_BUILD_DOCS=OFF
+     -DLLVM_BUILD_TESTS=OFF
+-    -DLLVM_CONFIG="/usr/bin/llvm-config32"
++    -DLLVM_INCLUDE_TESTS=OFF
++    -DLLVM_CONFIG="/usr/armv7h-linux-gnueabihf/bin/llvm-config"
++    -DLLVM_TABLEGEN_EXE="/usr/armv7h-linux-gnueabihf/bin/llvm-tblgen"
+     -DLLVM_ENABLE_RTTI=ON
+     -DLLVM_ENABLE_SPHINX=OFF
+     -DLLVM_EXTERNAL_LIT=/usr/bin/lit
+     -DLLVM_INCLUDE_DOCS=OFF
+-    -DLLVM_LIBDIR_SUFFIX=32
+     -DLLVM_LINK_LLVM_DYLIB=ON
++    -DLLVM_TARGETS_TO_BUILD="arm"
++    -DCMAKE_INSTALL_LIBDIR=/usr/armv7h-linux-gnueabihf/lib
+     -DLLVM_MAIN_SRC_DIR="$srcdir/llvm-$pkgver.src"
+   )
+ 
+@@ -89,6 +94,9 @@ build() {
+   cmake_args+=(-DLLVM_DISTRIBUTION_COMPONENTS="$distribution_components")
+ 
+   cmake .. "${cmake_args[@]}"
++  sed -i 's|/usr/lib/lib|/usr/lib32/lib|g' build.ninja
++  sed -i 's|32/libz.so|/libz.so|g' build.ninja
++  sed -i 's|32/libtinfo.so|/libtinfo.so|g' build.ninja
+   ninja
+ }
+ 
+@@ -96,7 +104,8 @@ package() {
+   cd clang-$pkgver.src/build
+ 
+   DESTDIR="$pkgdir" ninja install-distribution
+-  rm -rf "$pkgdir"/usr/{bin,include,lib,libexec,share}
++  rm -rf "$pkgdir"/usr/armv7h-linux-gnueabihf/share/
++  mv "$pkgdir"/usr/armv7h-linux-gnueabihf/lib "$pkgdir"/usr/lib32
+ 
+   install -Dm644 ../LICENSE.TXT "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+ }

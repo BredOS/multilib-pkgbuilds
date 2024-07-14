@@ -1,0 +1,39 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index e9fc7b4..5bc6a9d 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -16,7 +16,7 @@ sha512sums=('b40fb05bd58dc78f4e4e9b19c86991ab0611b708657c9a7fb42bfe82d57820a0fde
+ 
+ build() {
+   local meson_options=(
+-    --cross-file lib32
++    --cross-file arm-lib32
+     -D loongson-mmi=disabled
+     -D vmx=disabled
+     -D arm-simd=disabled
+@@ -25,11 +25,14 @@ build() {
+     -D iwmmxt=disabled
+     -D mips-dspr2=disabled
+     -D gtk=disabled
++    -D mmx=disabled
++    -D sse2=disabled
++    -D ssse3=disabled
+   )
+ 
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
+-  export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   arch-meson "$_pkgbasename"-"$pkgver" build "${meson_options[@]}"
+   ninja -C build
+@@ -41,7 +44,6 @@ check() {
+ 
+ package() {
+   DESTDIR="$pkgdir" meson install -C build
+-  rm -rf "${pkgdir}"/usr/include
+   mkdir -p "$pkgdir/usr/share/licenses"
+   ln -s $_pkgbasename "$pkgdir/usr/share/licenses/$pkgname"
+ }

@@ -1,0 +1,31 @@
+# Maintainer: Andreas Radke <andyrtr@archlinux.org>
+# Contributor: Jan de Groot <jgc@archlinux.org>
+
+_pkgname=xtrans
+pkgname=lib32-xtrans
+pkgver=1.5.0
+pkgrel=1
+pkgdesc="X transport library"
+arch=('any')
+license=('custom')
+url="https://xorg.freedesktop.org/"
+options=(!emptydirs)
+source=(${url}/releases/individual/lib/${_pkgname}-${pkgver}.tar.xz{,.sig})
+sha512sums=('e8091f11d4ad2b14e01de3eac56bdf2267ea26687ce66e3056374d0d02e049480c0b27c482f8828a0efd086f1e4c485108ca4dce3f83d66c1896effa3b38b228'
+            'SKIP')
+#validpgpkeys=('C383B778255613DFDB409D91DB221A6900000011') #  "Keith Packard <keithp@keithp.com>"
+validpgpkeys=('4A193C06D35E7C670FA4EF0BA2FB9E081F2D130E') # Alan Coopersmith <alan.coopersmith@oracle.com>
+
+build() {
+  cd ${_pkgname}-${pkgver}
+  export CC="armv7h-linux-gnueabihf-gcc"
+
+  ./configure --prefix=/usr --includedir=/usr/include32
+}
+
+package() {
+  cd ${_pkgname}-${pkgver}
+  make DESTDIR="${pkgdir}" install
+  rm -rf "${pkgdir}/usr/share"
+  install -Dm644 COPYING "${pkgdir}/usr/share/licenses/${pkgname}/COPYING"
+}

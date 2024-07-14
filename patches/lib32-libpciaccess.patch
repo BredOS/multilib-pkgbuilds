@@ -1,0 +1,27 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index aa1bc42..bfeb5c5 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -19,18 +19,17 @@ validpgpkeys+=('8703B6700E7EE06D7A39B8D6EDAE37B02CEB490D') # "Emil Velikov <emil
+ validpgpkeys+=('995ED5C8A6138EB0961F18474C09DD83CAAA50B2') # "Adam Jackson <ajax@nwnk.net>"
+ 
+ build() {
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
+-  export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+-  arch-meson ${_pkgbasename}-${pkgver} build --libdir=/usr/lib32
++  arch-meson ${_pkgbasename}-${pkgver} build --libdir=/usr/lib32 --cross-file arm-lib32
+   meson compile -C build
+ }
+ 
+ package() {
+   meson install -C build --destdir="$pkgdir"
+ 
+-  rm -rf "${pkgdir}"/usr/include
+   mkdir -p "$pkgdir/usr/share/licenses"
+   ln -s $_pkgbasename "$pkgdir/usr/share/licenses/$pkgname"
+ }

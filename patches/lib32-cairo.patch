@@ -1,0 +1,22 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index b599b4a..d05de92 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -44,7 +44,7 @@ prepare() {
+ 
+ build() {
+   local meson_options=(
+-    --cross-file lib32
++    --cross-file arm-lib32
+     -D dwrite=disabled
+     -D gtk_doc=false
+     -D spectre=disabled
+@@ -65,7 +65,7 @@ package_lib32-cairo() {
+ 
+   meson install -C build --destdir "$pkgdir"
+ 
+-  rm -r "$pkgdir"/usr/{include,bin}
++  rm -r "$pkgdir"/usr/bin
+ }
+ 
+ # vim:set sw=2 sts=-1 et:

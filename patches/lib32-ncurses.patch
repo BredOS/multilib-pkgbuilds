@@ -1,5 +1,5 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index b8d05b3..38f00bd 100644
+index b8d05b3..046f1f5 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
 @@ -51,6 +51,7 @@ build() {
@@ -10,23 +10,25 @@ index b8d05b3..38f00bd 100644
      --disable-db-install
      --disable-root-access
      --disable-root-environ
-@@ -71,8 +72,8 @@ build() {
+@@ -71,9 +72,9 @@ build() {
      --without-tests
    )
  
 -  export CC="gcc -m32"
 -  export CXX="g++ -m32"
+-  export PKG_CONFIG_LIBDIR='/usr/lib32/pkgconfig'
 +  export CC="armv7h-linux-gnueabihf-gcc"
 +  export CXX="armv7h-linux-gnueabihf-g++"
-   export PKG_CONFIG_LIBDIR='/usr/lib32/pkgconfig'
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
  
    cd $_name
+   ./configure "${configure_options[@]}"
 @@ -105,7 +106,7 @@ package() {
    done
  
    # remove all files conflicting with ncurses
 -  rm -frv "$pkgdir/usr/"{bin,include}
-+  rm -frv "$pkgdir/usr/bin"
++  rm -frv "$pkgdir/usr/include"
  }
  
  # vim: set et ts=2 sw=2:

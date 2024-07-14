@@ -1,0 +1,30 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index db8e258..df110e8 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -14,12 +14,12 @@ source=(${url}/releases/individual/lib/libXdamage-${pkgver}.tar.xz)
+ sha256sums=('52733c1f5262fca35f64e7d5060c6fcd81a880ba8e1e65c9621cf0727afb5d11')
+ 
+ build() {
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
+-  export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   cd "${srcdir}/libXdamage-${pkgver}"
+-  ./configure --prefix=/usr --sysconfdir=/etc --disable-static --libdir=/usr/lib32
++  ./configure --prefix=/usr --sysconfdir=/etc --disable-static --libdir=/usr/lib32 --includedir=/usr/include32
+   make
+ }
+ 
+@@ -27,7 +27,7 @@ package() {
+   cd "${srcdir}/libXdamage-${pkgver}"
+ 
+   make DESTDIR="${pkgdir}" install || return 1
+-  rm -rf "${pkgdir}"/usr/{include,share,bin}
++  rm -rf "${pkgdir}"/usr/{share,bin}
+   mkdir -p "$pkgdir/usr/share/licenses"
+   ln -s $_pkgbasename "$pkgdir/usr/share/licenses/$pkgname"
+ }

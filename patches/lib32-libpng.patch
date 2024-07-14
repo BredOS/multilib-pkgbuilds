@@ -1,0 +1,33 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 9670641..0be24ff 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -18,15 +18,16 @@ source=("https://downloads.sourceforge.net/sourceforge/${_pkgbasename}/${_pkgbas
+ sha256sums=('6a5ca0652392a2d7c9db2ae5b40210843c0bbc081cbd410825ab00cc59f14a6c')
+ 
+ build() {
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
+-  export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   cd "${srcdir}/${_pkgbasename}-${pkgver}"
+ 
+   ./configure \
+     --prefix=/usr \
+     --libdir=/usr/lib32 \
++    --includedir=/usr/include32 \
+     --program-suffix=-32 \
+     --disable-static
+   make
+@@ -37,7 +38,7 @@ package() {
+ 
+   make DESTDIR="${pkgdir}" install
+ 
+-  rm -rf "${pkgdir}"/usr/{include,share}
++  rm -rf "${pkgdir}"/usr/share
+ 
+   rm "$pkgdir/usr/bin/libpng-config"
+   ln -s "libpng${_libversion}-config-32" "$pkgdir/usr/bin/libpng-config-32"

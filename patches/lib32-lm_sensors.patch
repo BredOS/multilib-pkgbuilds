@@ -1,0 +1,25 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 73e4911..6581d7a 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -28,7 +28,7 @@ pkgver() {
+ prepare() {
+   cd "${srcdir}"/lm-sensors*
+ 
+-  sed -i 's/CC := gcc/CC := gcc -m32/' Makefile
++  sed -i 's/CC := gcc/CC := armv7h-linux-gnueabihf-gcc/' Makefile
+ }
+ 
+ build() {
+@@ -40,9 +40,9 @@ build() {
+ package() {
+   cd "${srcdir}"/lm-sensors*
+   
+-  make PREFIX=/usr LIBDIR=/usr/lib32 BUILD_STATIC_LIB=0 DESTDIR="${pkgdir}" install 
++  make PREFIX=/usr LIBDIR=/usr/lib32 BUILD_STATIC_LIB=0 INCLUDEDIR=/usr/include32 DESTDIR="${pkgdir}" install 
+   
+   rm -r "${pkgdir}"/etc/
+-  rm -r "${pkgdir}"/usr/{bin,sbin,include,man}
++  rm -r "${pkgdir}"/usr/{bin,sbin,man}
+ }
+ 

@@ -1,0 +1,22 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 0f57219..2db135d 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -50,7 +50,7 @@ prepare() {
+ 
+ build() {
+   local meson_options=(
+-    --cross-file lib32
++    --cross-file arm-lib32
+     -D chafa=disabled
+     -D cpp_std=c++17
+     -D docs=disabled
+@@ -91,7 +91,7 @@ package_lib32-harfbuzz() {
+   meson install -C build --destdir "$pkgdir"
+ 
+   ( cd "$pkgdir"
+-    rm -r usr/{bin,include}
++    rm -r usr/bin
+ 
+     _pick hb-cairo usr/lib32/libharfbuzz-cairo*
+     _pick hb-cairo usr/lib32/pkgconfig/harfbuzz-cairo.pc

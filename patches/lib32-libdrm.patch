@@ -1,0 +1,29 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index cd28bfc..d7904a9 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -27,12 +27,13 @@ prepare() {
+ }
+ 
+ build() {
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
+   export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+ 
+   arch-meson $_pkgbasename-$pkgver build \
+     --libdir=/usr/lib32 \
++    --includedir=/usr/include32 \
+     -Dudev=false \
+     -Dman-pages=disabled \
+     -Detnaviv=disabled \
+@@ -49,7 +50,7 @@ check() {
+ 
+ package() {
+   meson install -C build --destdir "$pkgdir"
+-  rm -rf "${pkgdir}"/usr/{include,share,bin}
++  rm -rf "${pkgdir}"/usr/{share,bin}
+   mkdir -p "$pkgdir/usr/share/licenses"
+   ln -s $_pkgbasename "$pkgdir/usr/share/licenses/$pkgname"
+ }

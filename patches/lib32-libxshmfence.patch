@@ -1,0 +1,38 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 1a3a529..e963de7 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -10,7 +10,7 @@ url="https://xorg.freedesktop.org/"
+ license=('GPL')
+ #groups=()
+ depends=('lib32-glibc' ${_pkgbasename})
+-makedepends=('xorg-util-macros' 'xorgproto' 'gcc-multilib')
++makedepends=('xorg-util-macros' 'lib32-xorgproto' 'gcc-multilib')
+ source=(${url}/releases/individual/lib/${_pkgbasename}-${pkgver}.tar.xz{,.sig})
+ sha512sums=('e20a6827e370726cf50489a69f4a52b897f1c44e3eba8c72a4e626b08724e877d090770b8016765736d887d5d5eaba1fda9c29066e62d259b4d1e2064bc1626c'
+             'SKIP')
+@@ -21,13 +21,13 @@ validpgpkeys+=('4A193C06D35E7C670FA4EF0BA2FB9E081F2D130E') # Alan Coopersmith <a
+ build() {
+   cd $_pkgbasename-$pkgver
+ 
+-  export CC="gcc -m32"
++  export CC="armv7h-linux-gnueabihf-gcc"
+   export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+ 
+   # fix some libtools errors
+   autoreconf -vfi
+ 	
+-  ./configure --prefix=/usr --libdir=/usr/lib32
++  ./configure --prefix=/usr --libdir=/usr/lib32 --includedir=/usr/include32
+   make
+ }
+ 
+@@ -39,8 +39,6 @@ check() {
+ package() {
+   cd $_pkgbasename-$pkgver
+   make DESTDIR="$pkgdir/" install
+-
+-  rm -r "${pkgdir}"/usr/include
+ 	
+   install -m755 -d "${pkgdir}/usr/share/licenses"
+   ln -s ${_pkgbasename} "${pkgdir}/usr/share/licenses/${pkgname}"

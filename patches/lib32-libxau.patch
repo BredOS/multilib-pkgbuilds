@@ -1,0 +1,27 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 73199ad..a7f5f19 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -19,10 +19,10 @@ sha256sums=('f3fa3282f5570c3f6bd620244438dbfbdd580fc80f02f549587a0f8ab329bbeb')
+ build() {
+   cd "${srcdir}/libXau-${pkgver}"
+ 
+-  export CC="gcc -m32"
+-  export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+-  ./configure --prefix=/usr --sysconfdir=/etc --libdir=/usr/lib32
++  ./configure --prefix=/usr --sysconfdir=/etc --libdir=/usr/lib32 --includedir=/usr/include32
+   make
+ }
+ 
+@@ -31,7 +31,7 @@ package() {
+ 
+   make DESTDIR="${pkgdir}" install
+ 
+-  rm -rf "${pkgdir}"/usr/{include,share}
++  rm -rf "${pkgdir}"/usr/share
+ 
+   mkdir -p "$pkgdir/usr/share/licenses"
+   ln -s $_pkgbasename "$pkgdir/usr/share/licenses/$pkgname"

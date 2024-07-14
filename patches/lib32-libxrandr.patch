@@ -1,0 +1,30 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index b1c1d11..52972ed 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -18,12 +18,12 @@ validpgpkeys=('10A6D91DA1B05BD29F6DEBAC0C74F35979C486BE'  # Dave Airlie <airlied
+               '4A193C06D35E7C670FA4EF0BA2FB9E081F2D130E') # Alan Coopersmith <alan.coopersmith@oracle.com>
+ 
+ build() {
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
+-  export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   cd "${srcdir}/libXrandr-${pkgver}"
+-  ./configure --prefix=/usr --sysconfdir=/etc --libdir=/usr/lib32
++  ./configure --prefix=/usr --sysconfdir=/etc --libdir=/usr/lib32 --includedir=/usr/include32
+   make
+ }
+ 
+@@ -32,7 +32,7 @@ package() {
+ 
+   make DESTDIR="${pkgdir}" install
+ 
+-  rm -rf "${pkgdir}"/usr/{include,share,bin}
++  rm -rf "${pkgdir}"/usr/{share,bin}
+   mkdir -p "$pkgdir/usr/share/licenses"
+   ln -s $_pkgbasename "$pkgdir/usr/share/licenses/$pkgname"
+ }

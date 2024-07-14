@@ -1,0 +1,42 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 96fc662..0af5d0c 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -8,7 +8,7 @@ pkgdesc="X11 client-side library (32-bit)"
+ arch=(x86_64)
+ url="https://xorg.freedesktop.org/"
+ depends=('lib32-libxcb' $_pkgbasename)
+-makedepends=('xorg-util-macros' 'xorgproto' 'xtrans' 'gcc-multilib')
++makedepends=('xorg-util-macros' 'lib32-xorgproto' 'lib32-xtrans' 'gcc-multilib')
+ license=('custom:XFREE86')
+ source=(${url}/releases/individual/lib/libX11-${pkgver}.tar.xz{,.sig})
+ sha512sums=('737af91818537295ac86be601b1e3d7e37d150716ec549580913b7cc9a44fee7a6ce9dbc3d46167eed91f23fe857c4dd355ed8f8440fe5fbbf8e9ebe47091b96'
+@@ -20,13 +20,16 @@ validpgpkeys+=('995ED5C8A6138EB0961F18474C09DD83CAAA50B2') # Adam Jackson <ajax@
+ #validpgpkeys+=('C383B778255613DFDB409D91DB221A6900000011') # "Keith Packard <keithp@keithp.com>"
+ 
+ build() {
+-  export CC="gcc -m32"
+-  export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export PKG_CONFIG="aarch64-unknown-linux-gnu-pkg-config"
++
+ 
+   cd libX11-${pkgver}
+   ./configure --prefix=/usr --disable-static --disable-xf86bigfont --disable-thread-safety-constructor \
+-      --libdir=/usr/lib32 --disable-specs
++      --libdir=/usr/lib32 --disable-specs --includedir=/usr/include32 --target=armv7h-linux-gnueabihf --build=armv7h-linux-gnueabihf --host=armv7h-linux-gnueabihf
+   sed -i -e 's/ -shared / -Wl,-O1,--as-needed\0/g' libtool
++  sed -i 's/\/usr\/include/\/usr\/include32/g' **Makefile
++  # sed -i 's|3232|32|g' **Makefile 
+   make
+ }
+ 
+@@ -40,7 +43,7 @@ package() {
+   cd libX11-${pkgver}
+   make DESTDIR="${pkgdir}" install
+ 
+-  rm -rf "${pkgdir}"/usr/{include,share}
++  rm -rf "${pkgdir}"/usr/share
+ 
+   mkdir -p "$pkgdir/usr/share/licenses"
+   ln -s $_pkgbasename "$pkgdir/usr/share/licenses/$pkgname"

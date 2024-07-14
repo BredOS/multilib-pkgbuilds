@@ -1,5 +1,5 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index b816043..1799072 100644
+index b816043..f0216d2 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
 @@ -18,8 +18,8 @@ sha512sums=('e85a0dab5195889948a3462189f0e0598d331d3457612e2d3350799dba2e244316d
@@ -13,6 +13,15 @@ index b816043..1799072 100644
    export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
  
    cd "${_pkgbasename}-${pkgver}"
+@@ -28,7 +28,7 @@ build() {
+   ./configure \
+     --prefix=/usr --infodir=/usr/share/info \
+     --enable-fat --enable-cxx --libdir=/usr/lib32 \
+-    --includedir=/usr/lib32/gmp
++    --includedir=/usr/include32
+ 
+   #Put gmp.h in the same folder as gmpxx.h
+   sed -i 's/$(exec_prefix)\/include/$\(includedir\)/' Makefile
 @@ -45,5 +45,5 @@ package() {
    cd "${_pkgbasename}-${pkgver}"
    make DESTDIR="${pkgdir}" install

@@ -1,0 +1,35 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index c49164e..41cd304 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -25,16 +25,17 @@ validpgpkeys=('462225C3B46F34879FC8496CD605848ED7E69871'  # "Daiki Ueno <ueno@un
+ 
+ 
+ build() {
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
+-  export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   cd gnutls-${pkgver}
+ 
+   # disable libidn for security reasons:
+   # http://lists.gnupg.org/pipermail/gnutls-devel/2015-May/007582.html
+ 
+-  ./configure --prefix=/usr --libdir=/usr/lib32 --build=i686-pc-linux-gnu \
++  ./configure --prefix=/usr --libdir=/usr/lib32 --build=armv7h-linux-gnueabihf \
++    --includedir=/usr/include32 \
+     --with-zlib \
+     --with-included-unistring \
+     --disable-year2038 \
+@@ -52,7 +53,7 @@ package() {
+   cd gnutls-${pkgver}
+   make DESTDIR="${pkgdir}" install
+ 
+-  rm -rf "${pkgdir}"/usr/{include,share}
++  rm -rf "${pkgdir}"/usr/share
+ 
+   # lib32-p11-kit tests need a 32-bit p11tool
+   mv "$pkgdir"/usr/bin/p11tool{,-32}

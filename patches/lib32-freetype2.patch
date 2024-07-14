@@ -1,0 +1,22 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index e0a6c47..b826ae9 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -53,7 +53,7 @@ prepare() {
+ 
+ build() {
+   local meson_options=(
+-    --cross-file lib32
++    --cross-file arm-lib32
+     -D default_library=shared
+   )
+ 
+@@ -72,8 +72,6 @@ package_lib32-freetype2() {
+   conflicts=()
+ 
+   meson install -C build --destdir="$pkgdir"
+-
+-  rm -r "$pkgdir"/usr/include
+ }
+ 
+ # vim:set sw=2 sts=-1 et:

@@ -1,0 +1,39 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 22aff38..aa9cb68 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -35,12 +35,14 @@ prepare() {
+   # https://bugzilla.mozilla.org/show_bug.cgi?id=1843007
+   # https://unicode-org.atlassian.net/browse/ICU-22132
+   patch -Np1 < "../../ICU-22132.patch"
++
++  sed -i 's/LDFLAGSICUDT=.*/LDFLAGSICUDT=/' config/mh-linux
+ }
+ 
+ build() {
+-  export CC='gcc -m32'
+-  export CXX='g++ -m32'
+-  export PKG_CONFIG='i686-pc-linux-gnu-pkg-config'
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   # Avoid a test suite failure with GCC 13
+   # https://www.mail-archive.com/debian-bugs-dist@lists.debian.org/msg1936508.html
+@@ -50,6 +52,7 @@ build() {
+   ./configure --prefix=/usr \
+ 	--libdir=/usr/lib32 \
+ 	--sysconfdir=/etc \
++	--includedir=/usr/include32 \
+ 	--mandir=/usr/share/man \
+ 	--sbindir=/usr/bin
+   make
+@@ -63,7 +66,7 @@ check() {
+ package() {
+   cd icu/source
+   make DESTDIR="${pkgdir}" install
+-  rm -r "${pkgdir}/usr"/{include,share}
++  rm -r "${pkgdir}/usr"/share
+ 
+   # keep icu-config-32
+   find "${pkgdir}/usr/bin" -type f -not -name icu-config -delete

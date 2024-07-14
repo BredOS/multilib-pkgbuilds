@@ -1,0 +1,13 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 7120b94..3a39e9d 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -157,8 +157,6 @@ build() {
+     -D vulkan-layers=device-select,intel-nullhw,overlay
+   )
+ 
+-  export BINDGEN_EXTRA_CLANG_ARGS="-m32"
+-
+   # Build only minimal debug info to reduce size
+   CFLAGS+=" -g1"
+   CXXFLAGS+=" -g1"

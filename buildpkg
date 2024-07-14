@@ -37,29 +37,30 @@ fi
 
 # Script dir (expand it to full path)
 script_dir=$(realpath $(dirname "$0"))
-localpkgs="arm32-binutils|arm32-gcc|arm32-linux-api-headers|arm32-gcc-bootstrap|arm32-filesystem|lib32-glibc"
+localpkgs="arm32-binutils|arm32-gcc|arm32-linux-api-headers|arm32-gcc-bootstrap|arm32-filesystem|lib32-glibc|lib32-xtrans|lib32-xorgproto|lib32-vulkan-headers|lib32-mesa-panfork-git"
 # Get the package name
 package="$1"
-if [ $generate_patch -eq 1 ]; then
-    "$script_dir"/genpatch "$package"
-fi
+
 # Make temp dir
 tempdir=$(mktemp -d)
-cd "$tempdir"
+
 
 # Pull the PKGBUILD
 if [[ $package =~ $localpkgs ]]; then
     cp -r "$script_dir"/"$package" .
     cd "$package"
+    makepkg -srAfi --nocheck --noconfirm --skippgpcheck
 else
+    test=$makepkgflags
+    if [ $generate_patch -eq 1 ]; then
+      "$script_dir"/genpatch "$package"
+    fi
+    cd "$tempdir"
     "$script_dir"/pullpkg "$package"
     cd "$package"
     "$script_dir"/applypatch "$package"
+    makepkg -srAfi --nocheck --noconfirm --skippgpcheck --config=$script_dir/makepkg.conf
 fi
-
-echo "Building $package ..."
-
-makepkg -srAfi --nocheck --noconfirm --skippgpcheck --config="$script_dir/makepkg.conf"
 
 echo "Done."
 

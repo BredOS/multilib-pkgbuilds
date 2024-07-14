@@ -1,0 +1,13 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 99dcdb3..a189000 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -35,7 +35,7 @@ depends=(
+   libxcrypt-compat
+   gcc-libs
+ )
+-depends_x86_64=(
++depends_aarch64=(
+   lib32-glibc
+   lib32-libxcrypt
+   lib32-libxcrypt-compat

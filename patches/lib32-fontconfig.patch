@@ -1,0 +1,22 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index d25b502..de8ac7b 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -43,7 +43,7 @@ pkgver() {
+ 
+ build() {
+   local meson_options=(
+-    --cross-file lib32
++    --cross-file arm-lib32
+     -D doc=disabled
+   )
+ 
+@@ -64,7 +64,7 @@ package() {
+ 
+   meson install -C build --destdir "$pkgdir"
+ 
+-  rm -r "$pkgdir"/{etc,usr/{include,share}}
++  rm -r "$pkgdir"/{etc,usr/share}
+ 
+   mv "$pkgdir"/usr/bin/fc-cache{,-32}
+   find "$pkgdir"/usr/bin -type f -not -name '*-32' -delete

@@ -1,0 +1,22 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 7d4f598..ad2c6fb 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -43,7 +43,7 @@ prepare() {
+ 
+ build() {
+   local meson_options=(
+-    --cross-file lib32
++    --cross-file arm-lib32
+     -D bash_completion=disabled
+     -D trust_paths=/etc/ca-certificates/trust-source:/usr/share/ca-certificates/trust-source
+   )
+@@ -61,7 +61,7 @@ package_lib32-p11-kit() {
+ 
+   meson install -C build --destdir "$pkgdir"
+ 
+-  rm -r "$pkgdir"/{etc,usr/{bin,include,lib,share}}
++  rm -r "$pkgdir"/{etc,usr/{bin,lib,share}}
+ 
+   install -Dt "$pkgdir/usr/share/licenses/$pkgname" -m644 p11-kit-$pkgver/COPYING
+ }

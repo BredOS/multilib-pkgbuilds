@@ -1,0 +1,31 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 6645693..7da6037 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -18,15 +18,16 @@ sha256sums=('e433d40b5b4bf2bc3c819e34d7bf6194937df4d74e2f8dee8012bd8fd69e7f8a')
+ build() {
+   cd "SPIRV-Tools-${_tag}"
+ 
+-  export CC='gcc -m32'
+-  export CXX='g++ -m32'
+-  export PKG_CONFIG=i686-pc-linux-gnu-pkg-config
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   cmake \
+       -Bbuild \
+       -GNinja \
+       -DCMAKE_INSTALL_PREFIX=/usr \
+       -DCMAKE_INSTALL_LIBDIR=lib32 \
++      -DCMAKE_INSTALL_INCLUDEDIR=include32 \
+       -DCMAKE_BUILD_TYPE=None \
+       -DSPIRV_WERROR=Off \
+       -DBUILD_SHARED_LIBS=ON \
+@@ -44,5 +45,5 @@ package() {
+   cd "SPIRV-Tools-${_tag}"
+ 
+   DESTDIR="${pkgdir}" cmake --install build
+-  rm -r "${pkgdir}"/usr/{bin,include}
++  rm -r "${pkgdir}"/usr/bin
+ }
