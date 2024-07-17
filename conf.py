@@ -11,6 +11,10 @@ ignore = [
     "lib32-libxcrypt-compat",
     "lib32-libcurl-compat",
     "lib32-libcurl-gnutls",
+    "lib32-libxkbcommon-x11",
+    "lib32-libpipewire",
+    "lib32-pipewire-jack",
+    "lib32-pipewire-v4l2",
 ]
 
 alias = {

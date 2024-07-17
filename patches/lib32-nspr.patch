@@ -1,0 +1,28 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index b00e243..6a9b4e2 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -40,10 +40,13 @@ prepare() {
+ }
+ 
+ build() {
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+   local configure_options=(
+       --prefix=/usr
+       --libdir=/usr/lib32
+-      --includedir=/usr/include/nspr
++      --includedir=/usr/include32/nspr
+       --enable-optimize
+       --disable-debug
+       --disable-64bit
+@@ -62,7 +65,7 @@ package() {
+   make DESTDIR="$pkgdir" install
+   ln -s nspr.pc "$pkgdir/usr/lib32/pkgconfig/mozilla-nspr.pc"
+ 
+-  rm -r "$pkgdir"/usr/{bin,share,include}
++  rm -r "$pkgdir"/usr/{bin,share}
+ }
+ 
+ # vim:set sw=2 sts=-1 et:

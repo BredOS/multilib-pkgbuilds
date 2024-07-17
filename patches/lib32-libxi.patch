@@ -1,0 +1,41 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index a72e7e1..fe2db35 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -9,7 +9,7 @@ pkgdesc="X11 Input extension library (32-bit)"
+ arch=('x86_64')
+ url="https://xorg.freedesktop.org"
+ depends=('lib32-libxext' 'lib32-libxfixes' $_pkgbasename)
+-makedepends=('pkgconfig' 'xorgproto' 'xorg-util-macros' gcc-multilib automake)
++makedepends=('pkgconfig' 'lib32-xorgproto' 'xorg-util-macros' gcc-multilib automake)
+ license=('custom')
+ source=(${url}/releases/individual/lib/libXi-${pkgver}.tar.xz{,.sig})
+ sha256sums=('89bfc0e814f288f784202e6e5f9b362b788ccecdeb078670145eacd8749656a7'
+@@ -20,14 +20,14 @@ validpgpkeys=('3C2C43D9447D5938EF4551EBE23B7E70B467F0BF'  # Peter Hutterer
+               'FD0004A26EADFE43A4C3F249C6F7AE200374452D') # "Povilas Kanapickas <povilas@radix.lt>"
+ 
+ build() {
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
+-  export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   cd "${srcdir}/libXi-${pkgver}"
+ 
+   ./configure --prefix=/usr --sysconfdir=/etc --disable-static \
+-    --libdir=/usr/lib32
++    --libdir=/usr/lib32 --includedir=/usr/include32
+ 
+   make
+ }
+@@ -37,7 +37,7 @@ package() {
+ 
+   make DESTDIR="${pkgdir}" install
+ 
+-  rm -rf "${pkgdir}"/usr/{include,share,bin}
++  rm -rf "${pkgdir}"/usr/{share,bin}
+   mkdir -p "$pkgdir/usr/share/licenses"
+   ln -s $_pkgbasename "$pkgdir/usr/share/licenses/$pkgname"
+ }

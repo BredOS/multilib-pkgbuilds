@@ -1,0 +1,76 @@
+# Maintainer: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+# Contributor: Johannes Löthberg <johannes@kyriasis.com>
+# Contributor: Piotr Gorski <lucjan.lucjanov@gmail.com>
+# Contributor: Lucy <lucy@luz.lu>
+# Contributor: Bartlomiej Piotrowski <nospam@bpiotrowski.pl>
+
+pkgname=pkgconf
+pkgver=2.1.1
+pkgrel=1
+pkgdesc="Package compiler and linker metadata toolkit"
+url="https://gitea.treehouse.systems/ariadne/pkgconf"
+license=(ISC)
+arch=(aarch64)
+depends=(
+  glibc
+  sh
+)
+makedepends=(
+  git
+  meson
+)
+provides=(
+  libpkgconf.so
+  pkg-config
+  pkgconfig
+)
+conflicts=(pkg-config)
+replaces=(pkg-config)
+_commit=b6e04e2d47b4ca093632b9efde6303a137ea0634  # tags/pkgconf-2.1.1
+source=(
+  "git+$url#commit=$_commit"
+  "armv7h-linux-gnueabihf.personality"
+  "aarch64-unknown-linux-gnu.personality"
+)
+b2sums=('fa2c1626e15d28759cc3191bd690fe7ee96463fd87bb85218f17de7b6cd81540d59de3ce403403284103f3a0543fbe8c49c56793f11de2e4ccc72060c08c7772'
+        '67d10c68405b27fc52c8986d4fd63861992b85c1c4a157422304db1010f2ae3984099986b64a73c8dfae925ae8cca6b7466c50efb7ceb9b3daab39b498d2e71d'
+        '7557b2ac336d02c0b445e0af0935a7b95307d8c900906c76e94542cbd9e5ae6c362c1d7c4024afbbe649e7d08b361cc82ff2697138bb362b069ead20d3bea64e')
+
+pkgver() {
+  cd pkgconf
+  git describe --tags | sed 's/^pkgconf-//;s/[^-]*-g/r&/;s/-/+/g'
+}
+
+prepare() {
+  cd pkgconf
+}
+
+build() {
+  local meson_options=(
+    -D tests=disabled  # Tests need kyua
+  )
+
+  arch-meson pkgconf build "${meson_options[@]}"
+  meson compile -C build
+}
+
+check() {
+  meson test -C build --print-errorlogs
+}
+
+package() {
+  meson install -C build --destdir "$pkgdir"
+
+  local p
+  for p in armv7h-linux-gnueabihf aarch64-unknown-linux-gnu; do
+    install -Dt "$pkgdir/usr/share/pkgconfig/personality.d" -m644 $p.personality
+    ln -s pkgconf "$pkgdir/usr/bin/$p-pkg-config"
+  done
+
+  ln -s pkgconf "$pkgdir/usr/bin/pkg-config"
+  ln -s pkgconf.1 "$pkgdir/usr/share/man/man1/pkg-config.1"
+
+  install -Dt "$pkgdir/usr/share/licenses/$pkgname" -m644 pkgconf/COPYING
+}
+
+# vim:set sw=2 sts=-1 et:

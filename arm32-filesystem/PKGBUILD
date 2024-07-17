@@ -7,9 +7,11 @@ pkgdesc="Needed files/folders for arm32 to function"
 arch=(aarch64)
 url=https://github.com/BredOS/multilib-pkgbuilds
 license=(GPL3)
+source=(arm-lib32)
+sha256sums=('SKIP')
 
 package() {
-    install -dm755 "${pkgdir}"/usr/{include32,lib32,armv7h-linux-gnueabihf}
+    install -dm755 "${pkgdir}"/usr/{include32,lib32,armv7h-linux-gnueabihf,share/meson/cross}
     install -dm755 "${pkgdir}"/usr/armv7h-linux-gnueabihf/sys-root/usr/
     # Symbolic links
     # /usr/armv7h-linux-gnueabihf/lib -> /usr/lib32
@@ -21,5 +23,8 @@ package() {
     ln -s /usr/lib32 "${pkgdir}"/usr/armv7h-linux-gnueabihf/sys-root/usr/lib
     ln -s /usr/include32 "${pkgdir}"/usr/armv7h-linux-gnueabihf/sys-root/usr/include
     ln -s /usr/lib32 "${pkgdir}"/lib32
+    ln -s /usr/include/spirv/ "${pkgdir}"/usr/include32/
+
+    install -Dm644 "${srcdir}"/arm-lib32 "${pkgdir}"/usr/share/meson/cross/arm-lib32
 
 }

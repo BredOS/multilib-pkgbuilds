@@ -1,0 +1,34 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 04ff6f8..e504b9d 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -36,9 +36,9 @@ prepare() {
+ 
+ build() {
+   local make_options=(
+-    CC='gcc -m32'
+-    CPP='g++ -m32'
+-    LD='ld -m elf_i386'
++    CC='armv7h-linux-gnueabihf-gcc'
++    CPP='armv7h-linux-gnueabihf-g++'
++    LD='armv7h-linux-gnueabihf-ld'
+     targets
+     -C ${_name}_sdk_$pkgver/src
+   )
+@@ -49,14 +49,14 @@ build() {
+ package() {
+   local make_options=(
+     INSTALL_PLUGINS_DIR="$pkgdir/usr/lib32/ladspa/"
+-    INSTALL_INCLUDE_DIR="$pkgdir/usr/include/"
++    INSTALL_INCLUDE_DIR="$pkgdir/usr/include32/"
+     INSTALL_BINARY_DIR="$pkgdir/usr/bin/"
+     install
+     -C ${_name}_sdk_$pkgver/src
+   )
+ 
+   make "${make_options[@]}"
+-  rm -rf "$pkgdir"/usr/{bin,include}
++  rm -rf "$pkgdir"/usr/bin
+ }
+ 
+ # vim: ts=2 sw=2 et:

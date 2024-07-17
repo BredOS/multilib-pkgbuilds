@@ -1,0 +1,23 @@
+[binaries]
+c = 'armv7h-linux-gnueabihf-gcc'
+cpp = 'armv7h-linux-gnueabihf-g++'
+ar = 'armv7h-linux-gnueabihf-ar'
+ranlib = 'armv7h-linux-gnueabihf-ranlib'
+pkg-config = 'armv7h-linux-gnueabihf-pkg-config'
+strip = 'armv7h-linux-gnueabihf-strip'
+rust = ['rustc', '--target', 'armv7-unknown-linux-gnueabihf']
+cups-config = 'cups-config'
+llvm-config = '/usr/armv7h-linux-gnueabihf/bin/llvm-config'
+
+[built-in options]
+libdir = 'lib32'
+includedir = 'include32'
+libexecdir = 'lib32'
+
+[host_machine]
+system = 'linux'
+subsystem = 'linux'
+kernel = 'linux'
+cpu_family = 'arm'
+cpu = 'armv7hl'
+endian = 'little'

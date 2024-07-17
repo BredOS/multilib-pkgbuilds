@@ -62,7 +62,7 @@ build() {
       --enable-plugin \
       --with-linker-hash-style=gnu --enable-gnu-indirect-function \
       --disable-multilib --disable-werror \
-      --enable-checking=release --enable-host-shared --disable-libssp --disable-libstdcxx-pch \
+      --enable-checking=release --enable-host-shared --enable-default-ssp --disable-libstdcxx-pch \
       --with-arch=armv7-a --with-float=hard --with-fpu=neon
 
   make -j14

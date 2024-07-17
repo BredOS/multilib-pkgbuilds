@@ -1,0 +1,31 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 488555f..d32568e 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -46,13 +46,14 @@ sha512sums=('a5892d96e4bd97702aacaddebef16c0d731582539ef3eb4cf95494b81fcda2305e9
+ validpgpkeys=('1528635D8053A57F77D1E08630A59377A7763BE6') # Sam Lantinga
+ 
+ build() {
+-  export CC='gcc -m32'
+-  export CXX='g++ -m32'
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+   export CFLAGS+=" -ffat-lto-objects"
+-  export PKG_CONFIG=i686-pc-linux-gnu-pkg-config
+   cmake -S SDL2-${pkgver} -B build -G Ninja \
+     -DCMAKE_INSTALL_PREFIX=/usr \
+     -DCMAKE_INSTALL_LIBDIR=lib32 \
++    -DCMAKE_INSTALL_INCLUDEDIR=include32 \
+     -DSDL_DLOPEN=ON \
+     -DSDL_RPATH=OFF \
+     -DSDL_STATIC=OFF
+@@ -61,7 +62,7 @@ build() {
+ 
+ package() {
+   DESTDIR="${pkgdir}" cmake --install build
+-  rm -rf "${pkgdir}"/usr/{bin,include,share}
++  rm -rf "${pkgdir}"/usr/{bin,share}
+   sed -i "s/libSDL2\.a/libSDL2main.a/g" "$pkgdir"/usr/lib32/cmake/SDL2/SDL2Targets-noconfig.cmake
+   install -dm 755 "${pkgdir}"/usr/share/licenses
+   ln -s sdl2 "${pkgdir}"/usr/share/licenses/lib32-sdl2

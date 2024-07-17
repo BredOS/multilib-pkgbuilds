@@ -1,8 +1,8 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index 6645693..7da6037 100644
+index 6645693..70aaaef 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
-@@ -18,15 +18,16 @@ sha256sums=('e433d40b5b4bf2bc3c819e34d7bf6194937df4d74e2f8dee8012bd8fd69e7f8a')
+@@ -18,20 +18,22 @@ sha256sums=('e433d40b5b4bf2bc3c819e34d7bf6194937df4d74e2f8dee8012bd8fd69e7f8a')
  build() {
    cd "SPIRV-Tools-${_tag}"
  
@@ -22,7 +22,13 @@ index 6645693..7da6037 100644
        -DCMAKE_BUILD_TYPE=None \
        -DSPIRV_WERROR=Off \
        -DBUILD_SHARED_LIBS=ON \
-@@ -44,5 +45,5 @@ package() {
+       -DSPIRV_TOOLS_BUILD_STATIC=OFF \
+       -DSPIRV-Headers_SOURCE_DIR=/usr
++  sed -i 's|-I/usr/include|-I/usr/include32|' build/build.ninja
+   cmake --build build
+ }
+ 
+@@ -44,5 +46,5 @@ package() {
    cd "SPIRV-Tools-${_tag}"
  
    DESTDIR="${pkgdir}" cmake --install build

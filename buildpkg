@@ -37,7 +37,8 @@ fi
 
 # Script dir (expand it to full path)
 script_dir=$(realpath $(dirname "$0"))
-localpkgs="arm32-binutils|arm32-gcc|arm32-linux-api-headers|arm32-gcc-bootstrap|arm32-filesystem|lib32-glibc|lib32-xtrans|lib32-xorgproto|lib32-vulkan-headers|lib32-mesa-panfork-git"
+localpkgs="lib32-glibc|lib32-xtrans|lib32-xorgproto|lib32-vulkan-headers|lib32-mesa-panfork-git|lib32-valgrind|lib32-nss|lib32-libmysofa|lib32-cunit|lib32-directx-headers|lib32-libomxil-bellagio"
+localpkgs_without_makepkg_conf="arm32-binutils|arm32-gcc|arm32-linux-api-headers|arm32-gcc-bootstrap|arm32-filesystem"
 # Get the package name
 package="$1"
 
@@ -47,11 +48,16 @@ tempdir=$(mktemp -d)
 
 # Pull the PKGBUILD
 if [[ $package =~ $localpkgs ]]; then
+    cd "$tempdir"
     cp -r "$script_dir"/"$package" .
     cd "$package"
-    makepkg -srAfi --nocheck --noconfirm --skippgpcheck
+    makepkg -srAfi --nocheck --noconfirm --skippgpcheck --config=$script_dir/makepkg.conf --skipchecksums
+elif [[ $package =~ $localpkgs_without_makepkg_conf ]]; then
+    cd "$tempdir"
+    cp -r "$script_dir"/"$package" .
+    cd "$package"
+    makepkg -srAfi --nocheck --noconfirm --skippgpcheck --skipchecksums
 else
-    test=$makepkgflags
     if [ $generate_patch -eq 1 ]; then
       "$script_dir"/genpatch "$package"
     fi
@@ -59,7 +65,7 @@ else
     "$script_dir"/pullpkg "$package"
     cd "$package"
     "$script_dir"/applypatch "$package"
-    makepkg -srAfi --nocheck --noconfirm --skippgpcheck --config=$script_dir/makepkg.conf
+    makepkg -srAfi --nocheck --noconfirm --skippgpcheck --config=$script_dir/makepkg.conf --skipchecksums
 fi
 
 echo "Done."

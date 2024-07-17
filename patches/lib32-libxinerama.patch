@@ -1,0 +1,30 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 5040176..f360536 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -15,12 +15,12 @@ source=(${url}/releases/individual/lib/libXinerama-${pkgver}.tar.xz)
+ sha512sums=('735b5320de4782005b379e409bf2f976131c17d496b297d33a0e127ca1443034778586b6b25c077b2ad73a4ab34d440d7510475e0041f38202bb40f15fb08ff7')
+ 
+ build() {
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
+-  export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   cd "${srcdir}/libXinerama-${pkgver}"
+-  ./configure --prefix=/usr --libdir=/usr/lib32
++  ./configure --prefix=/usr --libdir=/usr/lib32 --includedir=/usr/include32
+   make
+ }
+ 
+@@ -29,7 +29,7 @@ package() {
+ 
+   make DESTDIR="${pkgdir}" install
+ 
+-  rm -rf "${pkgdir}"/usr/{include,share,bin}
++  rm -rf "${pkgdir}"/usr/{share,bin}
+   mkdir -p "$pkgdir/usr/share/licenses"
+   ln -s $_pkgbasename "$pkgdir/usr/share/licenses/$pkgname"
+ }

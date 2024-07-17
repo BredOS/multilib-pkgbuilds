@@ -1,5 +1,5 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index b8d05b3..046f1f5 100644
+index b8d05b3..1c49625 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
 @@ -51,6 +51,7 @@ build() {
@@ -28,7 +28,7 @@ index b8d05b3..046f1f5 100644
  
    # remove all files conflicting with ncurses
 -  rm -frv "$pkgdir/usr/"{bin,include}
-+  rm -frv "$pkgdir/usr/include"
++  rm -frv "$pkgdir/usr/bin"
  }
  
  # vim: set et ts=2 sw=2:

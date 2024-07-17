@@ -1,0 +1,31 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 338c066..669fede 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -15,7 +15,7 @@ depends=(
+ makedepends=(
+   git
+   meson
+-  xorgproto
++  lib32-xorgproto
+ )
+ optdepends=(
+   'lib32-mesa-vdpau: driver for Mesa'
+@@ -34,7 +34,7 @@ pkgver() {
+ }
+ 
+ build() {
+-  arch-meson libvdpau build --cross-file lib32
++  arch-meson libvdpau build --cross-file arm-lib32
+   meson compile -C build
+ }
+ 
+@@ -44,7 +44,7 @@ check() {
+ 
+ package() {
+   meson install -C build --destdir "$pkgdir"
+-  rm -rf "${pkgdir}"/{etc,usr/include}
++  rm -rf "${pkgdir}"/etc
+ 
+   install -dm 755 "${pkgdir}"/usr/share/licenses
+   ln -s libvdpau "${pkgdir}"/usr/share/licenses/lib32-libvdpau

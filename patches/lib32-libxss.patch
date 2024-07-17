@@ -1,0 +1,31 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index eeb445a..04f1570 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -18,13 +18,13 @@ sha512sums=('e4395af85f8496618afb23ffdaca1a75f5e3d213478d8dc73249cbc9840d7b993ba
+ validpgpkeys=('4A193C06D35E7C670FA4EF0BA2FB9E081F2D130E') # "Alan Coopersmith <alan.coopersmith@oracle.com>"
+ 
+ build() {
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
+-  export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   cd "${srcdir}/libXScrnSaver-${pkgver}"
+   ./configure --prefix=/usr --sysconfdir=/etc \
+-    --libdir=/usr/lib32
++    --libdir=/usr/lib32 --includedir=/usr/include32
+   make
+ }
+ 
+@@ -33,7 +33,7 @@ package() {
+ 
+   make DESTDIR="${pkgdir}" install
+ 
+-  rm -rf "${pkgdir}"/usr/{include,share,bin}
++  rm -rf "${pkgdir}"/usr/{share,bin}
+   mkdir -p "$pkgdir/usr/share/licenses"
+   ln -s $_pkgbasename "$pkgdir/usr/share/licenses/$pkgname"
+ }

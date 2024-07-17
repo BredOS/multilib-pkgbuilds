@@ -1,0 +1,20 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 2323823..7205f9c 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -48,13 +48,13 @@ pkgver() {
+ 
+ build() {
+   CFLAGS+=" -DENABLE_VA_MESSAGING"  # Option missing
+-  arch-meson libva build --cross-file lib32
++  arch-meson libva build --cross-file arm-lib32
+   meson compile -C build
+ }
+ 
+ package() {
+   meson install -C build --destdir "${pkgdir}"
+-  rm -r "${pkgdir}/usr/include"
++
+   install -Dm 644 libva/COPYING -t "${pkgdir}"/usr/share/licenses/${pkgname}
+ }
+ 

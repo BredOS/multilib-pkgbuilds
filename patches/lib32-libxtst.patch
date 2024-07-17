@@ -1,0 +1,27 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 69c756f..74eeec5 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -18,11 +18,11 @@ validpgpkeys=('4A193C06D35E7C670FA4EF0BA2FB9E081F2D130E') # Alan Coopersmith <al
+ build() {
+   cd "${srcdir}/libXtst-${pkgver}"
+ 
+-  export CC="gcc -m32"
++  export CC="armv7h-linux-gnueabihf-gcc"
+   export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+ 
+   ./configure --prefix=/usr --disable-static \
+-    --libdir=/usr/lib32
++    --libdir=/usr/lib32 --includedir=/usr/include32
+   make
+ }
+ 
+@@ -31,7 +31,7 @@ package() {
+ 
+   make DESTDIR="${pkgdir}" install
+ 
+-  rm -rf "${pkgdir}"/usr/{include,share}
++  rm -rf "${pkgdir}"/usr/share
+ 
+   mkdir -p "$pkgdir/usr/share/licenses"
+   ln -s $_pkgbasename "$pkgdir/usr/share/licenses/$pkgname"

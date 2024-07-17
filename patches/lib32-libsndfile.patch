@@ -1,0 +1,40 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 730b9de..d81cbf8 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -36,9 +36,9 @@ validpgpkeys=(
+ )
+ 
+ build() {
+-  export CFLAGS+=" -m32"
+-  export CXXFLAGS+=" -m32"
+-  export LDFLAGS+=" -m32"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+   export PKG_CONFIG_PATH='/usr/lib32/pkgconfig'
+ 
+   local cmake_options=(
+@@ -46,6 +46,7 @@ build() {
+     -D BUILD_SHARED_LIBS=ON
+     -D CMAKE_BUILD_TYPE=None
+     -D CMAKE_INSTALL_LIBDIR=lib32
++    -D CMAKE_INSTALL_INCLUDEDIR=include32
+     -D CMAKE_INSTALL_PREFIX=/usr
+     -D ENABLE_MPEG=OFF
+     -S $_name-$pkgver
+@@ -55,6 +56,7 @@ build() {
+     -B build-test
+     -D CMAKE_BUILD_TYPE=None
+     -D CMAKE_INSTALL_LIBDIR=lib32
++    -D CMAKE_INSTALL_INCLUDEDIR=include32
+     -D CMAKE_INSTALL_PREFIX=/usr
+     -D ENABLE_MPEG=OFF
+     -S $_name-$pkgver
+@@ -82,5 +84,5 @@ package() {
+   install -vDm 644 $_name-$pkgver/{AUTHORS,ChangeLog,README} -t "$pkgdir/usr/share/doc/$pkgname"
+ 
+   # remove everything that is provided by libsndfile
+-  rm -rf "$pkgdir/usr/"{bin,include,share/{man,doc/$_name}}
++  rm -rf "$pkgdir/usr/"{bin,share/{man,doc/$_name}}
+ }

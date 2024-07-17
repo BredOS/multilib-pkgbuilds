@@ -1,0 +1,377 @@
+diff --git a/arm32-filesystem/PKGBUILD b/arm32-filesystem/PKGBUILD
+index 42179d2..fc4b1f3 100644
+--- a/arm32-filesystem/PKGBUILD
++++ b/arm32-filesystem/PKGBUILD
+@@ -7,9 +7,11 @@ pkgdesc="Needed files/folders for arm32 to function"
+ arch=(aarch64)
+ url=https://github.com/BredOS/multilib-pkgbuilds
+ license=(GPL3)
++source=(arm-lib32)
++sha256sums=('SKIP')
+ 
+ package() {
+-    install -dm755 "${pkgdir}"/usr/{include32,lib32,armv7h-linux-gnueabihf}
++    install -dm755 "${pkgdir}"/usr/{include32,lib32,armv7h-linux-gnueabihf,share/meson/cross}
+     install -dm755 "${pkgdir}"/usr/armv7h-linux-gnueabihf/sys-root/usr/
+     # Symbolic links
+     # /usr/armv7h-linux-gnueabihf/lib -> /usr/lib32
+@@ -21,5 +23,8 @@ package() {
+     ln -s /usr/lib32 "${pkgdir}"/usr/armv7h-linux-gnueabihf/sys-root/usr/lib
+     ln -s /usr/include32 "${pkgdir}"/usr/armv7h-linux-gnueabihf/sys-root/usr/include
+     ln -s /usr/lib32 "${pkgdir}"/lib32
++    ln -s /usr/include/spirv/ "${pkgdir}"/usr/include32/
++
++    install -Dm644 "${srcdir}"/arm-lib32 "${pkgdir}"/usr/share/meson/cross/arm-lib32
+ 
+ }
+\ No newline at end of file
+diff --git a/arm32-gcc/PKGBUILD b/arm32-gcc/PKGBUILD
+index a19db08..d4d539f 100644
+--- a/arm32-gcc/PKGBUILD
++++ b/arm32-gcc/PKGBUILD
+@@ -62,7 +62,7 @@ build() {
+       --enable-plugin \
+       --with-linker-hash-style=gnu --enable-gnu-indirect-function \
+       --disable-multilib --disable-werror \
+-      --enable-checking=release --enable-host-shared --disable-libssp --disable-libstdcxx-pch \
++      --enable-checking=release --enable-host-shared --enable-default-ssp --disable-libstdcxx-pch \
+       --with-arch=armv7-a --with-float=hard --with-fpu=neon
+ 
+   make -j14
+diff --git a/buildpkg b/buildpkg
+index 5324df8..4cb4638 100755
+--- a/buildpkg
++++ b/buildpkg
+@@ -37,7 +37,8 @@ fi
+ 
+ # Script dir (expand it to full path)
+ script_dir=$(realpath $(dirname "$0"))
+-localpkgs="arm32-binutils|arm32-gcc|arm32-linux-api-headers|arm32-gcc-bootstrap|arm32-filesystem|lib32-glibc|lib32-xtrans|lib32-xorgproto|lib32-vulkan-headers|lib32-mesa-panfork-git"
++localpkgs="lib32-glibc|lib32-xtrans|lib32-xorgproto|lib32-vulkan-headers|lib32-mesa-panfork-git|lib32-valgrind|lib32-nss|lib32-libmysofa|lib32-cunit|lib32-directx-headers|lib32-libomxil-bellagio"
++localpkgs_without_makepkg_conf="arm32-binutils|arm32-gcc|arm32-linux-api-headers|arm32-gcc-bootstrap|arm32-filesystem"
+ # Get the package name
+ package="$1"
+ 
+@@ -47,11 +48,16 @@ tempdir=$(mktemp -d)
+ 
+ # Pull the PKGBUILD
+ if [[ $package =~ $localpkgs ]]; then
++    cd "$tempdir"
++    cp -r "$script_dir"/"$package" .
++    cd "$package"
++    makepkg -srAfi --nocheck --noconfirm --skippgpcheck --config=$script_dir/makepkg.conf --skipchecksums
++elif [[ $package =~ $localpkgs_without_makepkg_conf ]]; then
++    cd "$tempdir"
+     cp -r "$script_dir"/"$package" .
+     cd "$package"
+-    makepkg -srAfi --nocheck --noconfirm --skippgpcheck
++    makepkg -srAfi --nocheck --noconfirm --skippgpcheck --skipchecksums
+ else
+-    test=$makepkgflags
+     if [ $generate_patch -eq 1 ]; then
+       "$script_dir"/genpatch "$package"
+     fi
+@@ -59,7 +65,7 @@ else
+     "$script_dir"/pullpkg "$package"
+     cd "$package"
+     "$script_dir"/applypatch "$package"
+-    makepkg -srAfi --nocheck --noconfirm --skippgpcheck --config=$script_dir/makepkg.conf
++    makepkg -srAfi --nocheck --noconfirm --skippgpcheck --config=$script_dir/makepkg.conf --skipchecksums
+ fi
+ 
+ echo "Done."
+diff --git a/conf.py b/conf.py
+index 7426a27..2cf55fc 100644
+--- a/conf.py
++++ b/conf.py
+@@ -11,6 +11,10 @@ ignore = [
+     "lib32-libxcrypt-compat",
+     "lib32-libcurl-compat",
+     "lib32-libcurl-gnutls",
++    "lib32-libxkbcommon-x11",
++    "lib32-libpipewire",
++    "lib32-pipewire-jack",
++    "lib32-pipewire-v4l2",
+ ]
+ 
+ alias = {
+diff --git a/patches/lib32-llvm.patch b/patches/lib32-llvm.patch
+index e049efa..1ef1ff6 100644
+--- a/patches/lib32-llvm.patch
++++ b/patches/lib32-llvm.patch
+@@ -1,5 +1,5 @@
+ diff --git a/PKGBUILD b/PKGBUILD
+-index abc66d0..9085654 100644
++index abc66d0..e40641b 100644
+ --- a/PKGBUILD
+ +++ b/PKGBUILD
+ @@ -65,7 +65,9 @@ prepare() {
+@@ -35,7 +35,7 @@ index abc66d0..9085654 100644
+      -DLLVM_ENABLE_RTTI=ON
+      -DLLVM_ENABLE_SPHINX=OFF
+ -    -DLLVM_HOST_TRIPLE=$CHOST
+-+    -DLLVM_TARGETS_TO_BUILD="ARM"
+++    -DLLVM_TARGETS_TO_BUILD="AMDGPU;ARM"
+ +    -DLLVM_HOST_TRIPLE="armv7h-linux-gnueabihf"
+      -DLLVM_INCLUDE_BENCHMARKS=OFF
+      -DLLVM_INSTALL_GTEST=ON
+diff --git a/patches/lib32-mesa.patch b/patches/lib32-mesa.patch
+index 64a2ecb..7923c1c 100644
+--- a/patches/lib32-mesa.patch
++++ b/patches/lib32-mesa.patch
+@@ -1,13 +1,153 @@
+ diff --git a/PKGBUILD b/PKGBUILD
+-index 7120b94..3a39e9d 100644
++index 7120b94..d1c6581 100644
+ --- a/PKGBUILD
+ +++ b/PKGBUILD
+-@@ -157,8 +157,6 @@ build() {
+-     -D vulkan-layers=device-select,intel-nullhw,overlay
++@@ -11,12 +11,14 @@ pkgname=(
++   lib32-mesa-vdpau
++   lib32-opencl-clover-mesa
++   lib32-opencl-rusticl-mesa
++-  lib32-vulkan-intel
++   lib32-vulkan-mesa-layers
++   lib32-vulkan-nouveau
++   lib32-vulkan-radeon
++   lib32-vulkan-swrast
++   lib32-vulkan-virtio
+++  lib32-vulkan-broadcom
+++  lib32-vulkan-panfrost
+++  lib32-vulkan-freedreno
++ )
++ pkgver=24.1.3
++ pkgrel=1
++@@ -69,7 +71,9 @@ makedepends=(
++   python-ply
++   rust-bindgen
++   wayland-protocols
++-  xorgproto
+++  lib32-directx-headers
+++  lib32-libomxil-bellagio
+++  lib32-xorgproto
++ )
++ options=(
++   # GCC 14 LTO causes segfault in LLVM under si_llvm_optimize_module
++@@ -133,16 +137,18 @@ prepare() {
++ }
++ 
++ build() {
+++  # shellcheck disable=SC2054
++   local meson_options=(
++-    --cross-file lib32
+++    --cross-file arm-lib32
++     -D android-libbacktrace=disabled
++     -D b_ndebug=true
++-    -D gallium-drivers=r300,r600,radeonsi,nouveau,virgl,svga,swrast,i915,iris,crocus,zink
+++    -D gallium-drivers=r300,r600,radeonsi,freedreno,nouveau,swrast,virgl,zink,d3d12,etnaviv,kmsro,lima,panfrost,svga,v3d,vc4
++     -D gallium-extra-hud=true
++     -D gallium-nine=true
++-    -D gallium-omx=disabled
+++    -D gallium-omx=bellagio
++     -D gallium-opencl=icd
++     -D gallium-rusticl=true
+++    -D gallium-xa=disabled
++     -D gles1=disabled
++     -D glx=dri
++     -D intel-clc=enabled
++@@ -153,11 +159,10 @@ build() {
++     -D platforms=x11,wayland
++     -D valgrind=disabled
++     -D video-codecs=all
++-    -D vulkan-drivers=amd,intel,intel_hasvk,swrast,virtio,nouveau
++-    -D vulkan-layers=device-select,intel-nullhw,overlay
+++    -D vulkan-drivers=amd,swrast,broadcom,panfrost,virtio,freedreno,nouveau
+++    -D vulkan-layers=device-select,overlay
+    )
+  
+ -  export BINDGEN_EXTRA_CLANG_ARGS="-m32"
+--
++ 
+    # Build only minimal debug info to reduce size
+    CFLAGS+=" -g1"
+-   CXXFLAGS+=" -g1"
++@@ -354,33 +359,6 @@ package_lib32-opencl-rusticl-mesa() {
++   install -Dm644 mesa-$pkgver/docs/license.rst -t "$pkgdir/usr/share/licenses/$pkgname"
++ }
++ 
++-package_lib32-vulkan-intel() {
++-  pkgdesc="Open-source Vulkan driver for Intel GPUs - 32-bit"
++-  depends=(
++-    lib32-expat
++-    lib32-gcc-libs
++-    lib32-glibc
++-    lib32-libdrm
++-    lib32-libx11
++-    lib32-libxcb
++-    lib32-libxshmfence
++-    lib32-systemd
++-    lib32-vulkan-icd-loader
++-    lib32-wayland
++-    lib32-xcb-util-keysyms
++-    lib32-zlib
++-    lib32-zstd
++-
++-    vulkan-intel
++-  )
++-  optdepends=("lib32-vulkan-mesa-layers: additional vulkan layers")
++-  provides=(lib32-vulkan-driver)
++-
++-  mv vkintel/* "$pkgdir"
++-
++-  install -Dm644 mesa-$pkgver/docs/license.rst -t "$pkgdir/usr/share/licenses/$pkgname"
++-}
++-
++ package_lib32-vulkan-mesa-layers() {
++   pkgdesc="Mesa's Vulkan layers - 32-bit"
++   depends=(
++@@ -514,3 +492,50 @@ package_lib32-vulkan-virtio() {
++ }
++ 
++ # vim:set sw=2 sts=-1 et:
+++package_lib32-vulkan-broadcom() {
+++  pkgdesc="Broadcom's Vulkan mesa driver - 32-bit"
+++  depends=(
+++    lib32-wayland
+++    lib32-libx11
+++    lib32-libxshmfence
+++    lib32-libdrm
+++  )
+++  optdepends=("lib32-vulkan-mesa-layers: additional vulkan layers")
+++  provides=(lib32-vulkan-driver)
+++
+++  mv vkbroadcom/* "$pkgdir"
+++
+++  install -Dm644 mesa-$pkgver/docs/license.rst -t "$pkgdir/usr/share/licenses/$pkgname"
+++}
+++
+++package_lib32-vulkan-panfrost() {
+++  pkgdesc="Panfrost Vulkan mesa driver - 32-bit"
+++  depends=(
+++    lib32-wayland
+++    lib32-libx11
+++    lib32-libxshmfence
+++    lib32-libdrm
+++  )
+++  optdepends=("lib32-vulkan-mesa-layers: additional vulkan layers")
+++  provides=(lib32-vulkan-driver)
+++
+++  mv vkpanfrost/* "$pkgdir"
+++
+++  install -Dm644 mesa-$pkgver/docs/license.rst -t "$pkgdir/usr/share/licenses/$pkgname"
+++}
+++
+++package_lib32-vulkan-freedreno() {
+++  pkgdesc="Freedreno Vulkan mesa driver - 32-bit"
+++  depends=(
+++    lib32-wayland
+++    lib32-libx11
+++    lib32-libxshmfence
+++    lib32-libdrm
+++  )
+++  optdepends=("lib32-vulkan-mesa-layers: additional vulkan layers")
+++  provides=(lib32-vulkan-driver)
+++
+++  mv vkfreedreno/* "$pkgdir"
+++
+++  install -Dm644 mesa-$pkgver/docs/license.rst -t "$pkgdir/usr/share/licenses/$pkgname"
+++}
++\ No newline at end of file
+diff --git a/patches/lib32-ncurses.patch b/patches/lib32-ncurses.patch
+index cd266e0..3f9cbab 100644
+--- a/patches/lib32-ncurses.patch
++++ b/patches/lib32-ncurses.patch
+@@ -1,5 +1,5 @@
+ diff --git a/PKGBUILD b/PKGBUILD
+-index b8d05b3..046f1f5 100644
++index b8d05b3..1c49625 100644
+ --- a/PKGBUILD
+ +++ b/PKGBUILD
+ @@ -51,6 +51,7 @@ build() {
+@@ -28,7 +28,7 @@ index b8d05b3..046f1f5 100644
+  
+    # remove all files conflicting with ncurses
+ -  rm -frv "$pkgdir/usr/"{bin,include}
+-+  rm -frv "$pkgdir/usr/include"
+++  rm -frv "$pkgdir/usr/bin"
+  }
+  
+  # vim: set et ts=2 sw=2:
+diff --git a/patches/lib32-spirv-tools.patch b/patches/lib32-spirv-tools.patch
+index 12f8767..129d0ce 100644
+--- a/patches/lib32-spirv-tools.patch
++++ b/patches/lib32-spirv-tools.patch
+@@ -1,8 +1,8 @@
+ diff --git a/PKGBUILD b/PKGBUILD
+-index 6645693..7da6037 100644
++index 6645693..70aaaef 100644
+ --- a/PKGBUILD
+ +++ b/PKGBUILD
+-@@ -18,15 +18,16 @@ sha256sums=('e433d40b5b4bf2bc3c819e34d7bf6194937df4d74e2f8dee8012bd8fd69e7f8a')
++@@ -18,20 +18,22 @@ sha256sums=('e433d40b5b4bf2bc3c819e34d7bf6194937df4d74e2f8dee8012bd8fd69e7f8a')
+  build() {
+    cd "SPIRV-Tools-${_tag}"
+  
+@@ -22,7 +22,13 @@ index 6645693..7da6037 100644
+        -DCMAKE_BUILD_TYPE=None \
+        -DSPIRV_WERROR=Off \
+        -DBUILD_SHARED_LIBS=ON \
+-@@ -44,5 +45,5 @@ package() {
++       -DSPIRV_TOOLS_BUILD_STATIC=OFF \
++       -DSPIRV-Headers_SOURCE_DIR=/usr
+++  sed -i 's|-I/usr/include|-I/usr/include32|' build/build.ninja
++   cmake --build build
++ }
++ 
++@@ -44,5 +46,5 @@ package() {
+    cd "SPIRV-Tools-${_tag}"
+  
+    DESTDIR="${pkgdir}" cmake --install build
+diff --git a/patches/steam.patch b/patches/steam.patch
+index ff6b912..8655258 100644
+--- a/patches/steam.patch
++++ b/patches/steam.patch
+@@ -1,5 +1,5 @@
+ diff --git a/PKGBUILD b/PKGBUILD
+-index 99dcdb3..a189000 100644
++index 99dcdb3..9ff1e31 100644
+ --- a/PKGBUILD
+ +++ b/PKGBUILD
+ @@ -35,7 +35,7 @@ depends=(
+@@ -11,3 +11,35 @@ index 99dcdb3..a189000 100644
+    lib32-glibc
+    lib32-libxcrypt
+    lib32-libxcrypt-compat
++@@ -46,18 +46,20 @@ depends_x86_64=(
++   lib32-alsa-plugins
++   lib32-libgpg-error
++   lib32-nss
++-  lib32-vulkan-driver
+++  # lib32-vulkan-driver
++   lib32-vulkan-icd-loader
+++  box86
+++  box64
++ )
++ optdepends=('steam-native-runtime: steam native runtime support')
++ source=(https://repo.steampowered.com/${pkgname}/pool/${pkgname}/s/${pkgname}/${pkgname}_${pkgver}{.tar.gz,.dsc}
++         steam-runtime.sh)
++ sha512sums=('52d1a23f43012af641ebc9a03a444b6944ea966e0814619c890e792442e760a96bf570a84e4f8b38552904dafb6572a92de31154ddefe1eb8d702106605c8497'
++             '68b59c7b4e9d55b60f92b466e01c10b5d84309e5822adb6bfdee8790a77357eb513166d958f25fc8f17f4f786b2dae19f281c330ff7bc34d4dbb17a4b263c99a'
++-            '5e75c019e9fe8c67d686c4e3343dac1180a69a4bdb7d39b333415c63201eef9b98da5619dbf6fd8daa6884e65bc7f8afc9e52778682425e5a75987d527eae6f0')
+++            'SKIP')
++ b2sums=('73538d120182b37cca15e99512af6c689ff29e47cd37ea5bdd0d754f42aacd69aa71125e3c07140d8b8eaf55ee980babdfa6f7a1de8daf8c6ce8af4b03608cbc'
++         '27f2df8198d0fcf5173f3b4e3cef38d9cfc122aa4e5383ee5924597892137918cbcf5fce813f6379412b5a61c676b13f85ef70798ab94a91d67eaaf8583b7250'
++-        'c6bac99336b7c30fec7cdbaf9e949555c687dd9dff50bcae136134d6314f4b841f5fc66ddb2caac1b003690b926fd4afbdc11da143b4674db4b75f27709fdd23')
+++        'SKIP')
++ validpgpkeys=('BA1816EF8E75005FCF5E27A1F24AEA9FB05498B7') # linux@steampowered.com
++ 
++ prepare() {
++diff --git a/steam-runtime.sh b/steam-runtime.sh
++index fc10ad5..8397016 100755
++--- a/steam-runtime.sh
+++++ b/steam-runtime.sh
++@@ -1,2 +1,2 @@
++ #!/bin/sh
++-exec /usr/lib/steam/steam "$@"
+++exec box86 /usr/lib/steam/steam "$@"

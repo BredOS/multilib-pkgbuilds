@@ -1,0 +1,29 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index ece7748..a44f15c 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -36,14 +36,15 @@ build() {
+   local configure_options=(
+     --prefix=/usr
+     --libdir=/usr/lib32
++    --includedir=/usr/include32
+     --without-debug
+     --disable-python
+   )
+   # -flto=auto is not supported: https://github.com/alsa-project/alsa-lib/issues/110
+   CFLAGS+=" -flto-partition=none"
+ 
+-  export CC='gcc -m32'
+-  export PKG_CONFIG=i686-pc-linux-gnu-pkg-config
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   cd $_name-$pkgver
+   ./configure "${configure_options[@]}"
+@@ -59,5 +60,5 @@ check() {
+ 
+ package() {
+   make DESTDIR="$pkgdir" install -C $_name-$pkgver
+-  rm -r "$pkgdir"/usr/{bin,include,share}
++  rm -r "$pkgdir"/usr/{bin,share}
+ }

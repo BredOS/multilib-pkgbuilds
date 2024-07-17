@@ -1,0 +1,30 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 6055933..eb0dd91 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -36,13 +36,14 @@ build() {
+     -D BUILD_SHARED_LIBS=ON
+     -D CMAKE_BUILD_TYPE=None
+     -D CMAKE_INSTALL_LIBDIR=lib32
++    -D CMAKE_INSTALL_INCLUDEDIR=include32
+     -D CMAKE_INSTALL_PREFIX=/usr
+     -S $_name-$pkgver
+     -W no-dev
+   )
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
+-  export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   cmake "${cmake_options[@]}"
+   cmake --build build --verbose
+@@ -55,6 +56,6 @@ build() {
+ package() {
+   DESTDIR="$pkgdir" cmake --install build
+   # remove everything that is provided by libsamplerate
+-  rm -rfv "$pkgdir"/usr/{include,share,bin}
++  rm -rfv "$pkgdir"/usr/{share,bin}
+   install -vDm 644 $_name-$pkgver/COPYING -t "$pkgdir/usr/share/licenses/$pkgname/"
+ }

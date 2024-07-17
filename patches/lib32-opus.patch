@@ -1,0 +1,21 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 67e14b4..da0bf91 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -36,7 +36,7 @@ prepare() {
+ 
+ build() {
+   local meson_options=(
+-    --cross-file lib32
++    --cross-file arm-lib32
+     -D asm=disabled
+     -D custom-modes=true
+     -D deep-plc=enabled
+@@ -57,7 +57,6 @@ package_lib32-opus() {
+   provides=(libopus.so)
+ 
+   meson install -C build --destdir "$pkgdir"
+-  rm -r "$pkgdir/usr/include"
+ 
+   install -Dt "$pkgdir/usr/share/licenses/$pkgname" -m644 opus/COPYING
+ }

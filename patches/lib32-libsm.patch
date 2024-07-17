@@ -1,0 +1,27 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 4c4f87d..9680a94 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -9,17 +9,18 @@ arch=('x86_64')
+ license=('custom')
+ url="https://xorg.freedesktop.org/"
+ depends=('lib32-libice' 'lib32-util-linux' $_pkgbasename)
+-makedepends=('xorg-util-macros' 'xtrans' 'gcc-multilib' 'xorgproto')
++makedepends=('xorg-util-macros' 'lib32-xtrans' 'gcc-multilib' 'lib32-xorgproto')
+ source=(${url}/releases/individual/lib/libSM-${pkgver}.tar.xz)
+ sha512sums=('7f1d41b7b6c5dd456c49ccad7740c3ba9791a2793fa50fd94814a4164ce2e20c4a0a0ad42a87708e494ed5c23f611be6d3ccd9ef1e9add6d46ac545e2b0f6f86')
+ 
+ build() {
+   cd libSM-${pkgver}
+ 
+-  export CC="gcc -m32"
+-  export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+-  ./configure --prefix=/usr --sysconfdir=/etc --libdir=/usr/lib32
++  ./configure --prefix=/usr --sysconfdir=/etc --libdir=/usr/lib32 --includedir=/usr/include32
+   make
+ }
+ 

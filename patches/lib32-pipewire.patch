@@ -1,0 +1,22 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 80bd84b..c384d4e 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -36,7 +36,7 @@ prepare() {
+ 
+ build() {
+   local meson_options=(
+-    --cross-file lib32
++    --cross-file arm-lib32
+     -D avahi=disabled
+     -D avb=disabled
+     -D bluez5-codec-lc3=disabled
+@@ -130,7 +130,7 @@ package_lib32-pipewire() {
+ 
+     _pick v4l2 usr/lib32/$_pwname/v4l2
+ 
+-    rm -r usr/{bin,include,lib,share}
++    rm -r usr/{bin,lib,share}
+   )
+ 
+   install -Dt "$pkgdir/usr/share/licenses/$pkgname" -m644 pipewire/COPYING

@@ -1,0 +1,28 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 234433e..f415e41 100755
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -43,11 +43,12 @@ build() {
+     --prefix=/usr
+     --enable-cxx
+     --libdir=/usr/lib32
++    --includedir=/usr/include32
+   )
+ 
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
+-  export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   cd $_name-$pkgver
+   ./configure "${configure_options[@]}"
+@@ -63,7 +64,6 @@ package () {
+   )
+ 
+   make DESTDIR="$pkgdir" install -C $_name-$pkgver
+-  rm -rf "$pkgdir/usr/include"
+   install -vDm 644 $_name-$pkgver/LICENSE.txt -t "$pkgdir/usr/share/licenses/$pkgname/"
+   install -vDm 644 $_name-$pkgver/README.* -t "$pkgdir/usr/share/doc/$pkgname/"
+ }

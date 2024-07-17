@@ -1,0 +1,5 @@
+Triplet: armv7h-linux-gnueabihf
+SysrootDir: /
+DefaultSearchPaths: /usr/lib32/pkgconfig:/usr/share/pkgconfig
+SystemIncludePaths: /usr/include32
+SystemLibraryPaths: /usr/lib32

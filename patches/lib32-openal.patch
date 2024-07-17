@@ -1,0 +1,40 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 5c0bdea..c60c8a3 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -25,6 +25,7 @@ makedepends=(
+   lib32-libpulse
+   lib32-pipewire
+   lib32-portaudio
++  lib32-libmysofa
+   ninja
+ )
+ optdepends=(
+@@ -48,13 +49,15 @@ build() {
+     -DCMAKE_INSTALL_PREFIX=/usr
+     -DCMAKE_BUILD_TYPE=None
+     -DCMAKE_INSTALL_LIBDIR=lib32
++    -DCMAKE_INSTALL_INCLUDEDIR=include32
+   )
+ 
+-  export CC="gcc -m32 -mstackrealign"
+-  export CXX="g++ -m32 -mstackrealign"
+-  export PKG_CONFIG=i686-pc-linux-gnu-pkg-config
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   cmake -S openal-soft -B build -G Ninja "${cmake_options[@]}"
++
+   cmake --build build
+ }
+ 
+@@ -62,7 +65,7 @@ package_lib32-openal() {
+   provides+=(libopenal.so)
+ 
+   DESTDIR="$pkgdir" cmake --install build
+-  rm -rv "$pkgdir"/usr/{include,share,bin}
++  rm -rv "$pkgdir"/usr/{share,bin}
+ }
+ 
+ # vim:set sw=2 sts=-1 et:

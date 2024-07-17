@@ -1,0 +1,30 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 1ae9824..2222495 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -29,13 +29,14 @@ prepare() {
+ }
+ 
+ build() {
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
+-  export PKG_CONFIG=i686-pc-linux-gnu-pkg-config
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   cmake -S ogg -B build -G Ninja \
+     -DCMAKE_INSTALL_PREFIX=/usr \
+     -DCMAKE_INSTALL_LIBDIR=/usr/lib32 \
++    -DCMAKE_INSTALL_INCLUDEDIR=/usr/include32 \
+     -DINSTALL_DOCS=OFF \
+     -DBUILD_SHARED_LIBS=ON
+   cmake --build build
+@@ -43,7 +44,6 @@ build() {
+ 
+ package() {
+   DESTDIR="${pkgdir}" cmake --install build
+-  rm -r "$pkgdir"/usr/include
+   install -Dm 644 ogg/COPYING -t "${pkgdir}"/usr/share/licenses/${pkgname}/
+ }
+ 

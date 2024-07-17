@@ -1,0 +1,33 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 2355550..ab75dd6 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -12,7 +12,6 @@ depends=(
+   libavtp
+ )
+ makedepends=(
+-  lib32-cmocka
+   meson
+ )
+ provides=(libavtp.so)
+@@ -21,15 +20,14 @@ sha512sums=('b7e7cd412ce7b62b2c0908427448bc88ca3bddd18823694744a98aa9e15e4f4daa7
+ b2sums=('a74d7ea25006aa03f4d30b47ca1a76012d3bd1ea74a33b14822fff5521f45923224a15c00a7779478008f7e12dd11575df455e7b1f08f0c83e8b7809faf60f3c')
+ 
+ build() {
+-  export CC='gcc -m32'
+-  export PKG_CONFIG_PATH='/usr/lib32/pkgconfig'
+-  arch-meson --libdir=/usr/lib32 build $_name-$pkgver
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
++  arch-meson --libdir=/usr/lib32 --includedir=/usr/include32 build $_name-$pkgver
+   ninja -C build
+ }
+ 
+-check() {
+-  meson test -C build
+-}
++
+ 
+ package() {
+   DESTDIR="$pkgdir" meson install -C build

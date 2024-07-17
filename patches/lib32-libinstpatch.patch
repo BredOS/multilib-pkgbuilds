@@ -1,0 +1,29 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index ec28715..4b92d63 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -15,6 +15,7 @@ depends=(
+ )
+ makedepends=(
+   cmake
++  glib2-devel
+   lib32-glib2
+   lib32-libsndfile
+   python
+@@ -37,7 +38,7 @@ build() {
+ 
+   export CFLAGS+=" $CPPFLAGS"
+   export CXXFLAGS+=" $CPPFLAGS"
+-  export CC='gcc -m32'
++  export CC='armv7h-linux-gnueabihf-gcc'
+   export PKG_CONFIG_PATH='/usr/lib32/pkgconfig'
+ 
+   cmake "${cmake_options[@]}"
+@@ -51,5 +52,6 @@ package() {
+   )
+ 
+   DESTDIR="$pkgdir" cmake --install build
+-  rm -rf "$pkgdir/usr/include"
++  mv "$pkgdir"/usr/include "$pkgdir"/usr/include32
++  sed -i 's|/include/|/include32/|' "$pkgdir"/usr/lib32/pkgconfig/*.pc
+ }

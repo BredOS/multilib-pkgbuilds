@@ -1,0 +1,35 @@
+_pkgname=nss
+repo=core
+pkgname=lib32-nss
+pkgver=3.102
+pkgrel=1
+pkgdesc="Repackaged version of $_pkgname"
+arch=('aarch64')
+url="http://dk.mirror.archlinuxarm.org/armv7h/${repo}/"
+license=('GPL')
+depends=(
+  'lib32-nspr>=4.35'
+  'lib32-p11-kit>=0.23.19'
+  lib32-glibc
+  lib32-sqlite
+  lib32-zlib
+
+)
+source=("${url}${_pkgname}-${pkgver}-${pkgrel}-armv7h.pkg.tar.xz")
+noextract=("${pkgname}-${pkgver}-${pkgrel}-armv7h.pkg.tar.xz")
+sha256sums=('SKIP')
+
+package() {
+    tar -xJf "${srcdir}/${_pkgname}-${pkgver}-${pkgrel}-armv7h.pkg.tar.xz" -C "${pkgdir}/"
+    rm -rfv "${pkgdir}/"{.BUILDINFO,.MTREE,.PKGINFO}
+
+    # mkdir -p "${pkgdir}/usr/armv7h-linux-gnueabihf"
+    # mv "${pkgdir}"/usr/bin "${pkgdir}"/usr/armv7h-linux-gnueabihf/bin
+    rm -rf "${pkgdir}/usr/"{share,bin}
+    rm -rf "${pkgdir}/etc"
+    mv "${pkgdir}/usr/lib" "${pkgdir}/usr/lib32"
+    mv "${pkgdir}/usr/include" "${pkgdir}/usr/include32"
+
+    sed -i 's|/usr/lib|/usr/lib32|g' "${pkgdir}/usr/lib32/pkgconfig/"*.pc
+    sed -i 's|/usr/include|/usr/include32|g' "${pkgdir}/usr/lib32/pkgconfig/"*.pc
+}

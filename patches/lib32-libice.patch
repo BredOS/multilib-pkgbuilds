@@ -1,0 +1,39 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 90876be..f2903c4 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -9,7 +9,7 @@ pkgdesc="X11 Inter-Client Exchange library (32-bit)"
+ arch=(x86_64)
+ url="https://xorg.freedesktop.org/"
+ depends=('lib32-glibc' $_pkgbasename)
+-makedepends=('xtrans>=1.2.5' 'xorg-util-macros' 'xorgproto')
++makedepends=('lib32-xtrans>=1.2.5' 'xorg-util-macros' 'lib32-xorgproto')
+ source=(${url}/releases/individual/lib/libICE-${pkgver}.tar.xz{,.sig})
+ license=('custom')
+ sha1sums=('7e4b51bb5633d7fc7d1f4e161d231591ab545f0b'
+@@ -21,10 +21,13 @@ validpgpkeys=('3BB639E56F861FA2E86505690FDD682D974CA72A') # Matt Turner <mattst8
+ build() {
+   cd "${srcdir}/libICE-${pkgver}"
+ 
+-  export CC="gcc -m32"
+-  export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+-  ./configure --prefix=/usr --sysconfdir=/etc --libdir=/usr/lib32
++  ./configure --prefix=/usr --sysconfdir=/etc --libdir=/usr/lib32 --includedir=/usr/include32
++
++  find . -name Makefile -print -exec sed -i 's|-I/usr/include|-I/usr/include32|' {} \;
+ 
+   make
+ }
+@@ -33,7 +36,7 @@ package() {
+   cd "${srcdir}/libICE-${pkgver}"
+   make DESTDIR="${pkgdir}" install
+ 
+-  rm -rf "${pkgdir}"/usr/{include,share}
++  rm -rf "${pkgdir}"/usr/share
+ 
+   mkdir -p "$pkgdir/usr/share/licenses"
+   ln -s $_pkgbasename "$pkgdir/usr/share/licenses/$pkgname"
