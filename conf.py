@@ -3,8 +3,9 @@
 debug = True
 
 repos = [
-    "https://geo.mirror.pkgbuild.com/multilib/os/x86_64/multilib.db.tar.gz",
     "https://repo.bredos.org/repo/BredOS-multilib/aarch64/BredOS-multilib.db.tar.gz",
+    "https://geo.mirror.pkgbuild.com/multilib/os/x86_64/multilib.db.tar.gz",
+    "https://geo.mirror.pkgbuild.com/extra/os/x86_64/extra.db.tar.gz",
 ]
 
 ignore = [

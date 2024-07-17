@@ -76,21 +76,22 @@ def lists() -> list:
     with open("lists.log", "w") as logf:
         try:
             clean()
-            download()
-            dr0 = listdir("0-repo")
-            dr1 = listdir("1-repo")
-            # sleep(1)
-            for i in dr0:
-                if i not in dr1:
-                    pkgname = pkname(f"./0-repo/{i}/desc")
-                    repover = pkver(f"./0-repo/{i}/desc")
-                    aurver = None  # Can remain None
-                    if pkgname is None or repover is None:
-                        raise RuntimeError("Package unparsable!!")
-                    if pkgname not in conf.ignore:
-                        for j in dr1:
-                            if j[:2] == i[:2]:
-                                aurname = pkname(f"./1-repo/{j}/desc")
+            listlen = download()
+            drs = []
+            for i in range(len(conf.repos)):
+                drs.append(listdir(str(i) + "-repo"))
+            for i in drs[0]:
+                pkgname = pkname(f"./0-repo/{i}/desc")
+                repover = pkver(f"./0-repo/{i}/desc")
+                found_anywhr = False
+                if pkgname is None or repover is None:
+                    raise RuntimeError("Package unparsable!!")
+                if pkgname not in conf.ignore:
+                    for j in range(1, len(drs)):
+                        aurver = None # May remain None
+                        for k in drs[j]:
+                            if k[:2] == i[:2]: # Speedup
+                                aurname = pkname(f"./1-repo/{k}/desc")
                                 if aurname == pkgname or (
                                     pkgname in conf.alias
                                     and (
@@ -104,51 +105,52 @@ def lists() -> list:
                                         )
                                     )
                                 ):
-                                    aurver = pkver(f"./1-repo/{j}/desc")
+                                    aurver = pkver(f"./1-repo/{k}/desc")
+                                    found_anywhr = True
                                     break
+
                         if aurver is not None:
                             compare = (
                                 check_output(["/usr/bin/vercmp", aurver, repover])
                                 .decode()
                                 .strip(" ")
                             )
-                            if int(compare) < int(0):
+                            if int(compare) < 0:
                                 if conf.debug:
                                     print(
-                                        f'\033[31mPackage \033[0m"{pkgname}" \033[31mis outdated!\033[0m "{repover}" > "{aurver}"'
+                                        f'\033[31mPackage \033[0m"{pkgname}" \033[31mis outdated in comparisson with repo #{j}!\033[0m "{repover}" > "{aurver}"'
                                     )
                                     logf.write(
                                         f'Package "{pkgname}" is outdated! "{repover}" > "{aurver}"\n'
                                     )
                                     res.append(pkgname)
-                            elif int(compare) > int(0):
+                            elif int(compare) > 0:
                                 if conf.debug:
                                     print(
-                                        f'\033[36mPackage \033[0m"{pkgname}" \033[36mis ahead of repo! \033[0m"{repover}" < "{aurver}"'
+                                        f'\033[36mPackage \033[0m"{pkgname}" \033[36mis ahead of repo #{j}! \033[0m"{repover}" < "{aurver}"'
                                     )
                                     logf.write(
                                         f'Package "{pkgname}" is ahead of repo! "{repover}" < "{aurver}"\n'
                                     )
-                            elif int(compare) == int(0):
+                            elif int(compare) == 0:
                                 if conf.debug:
                                     print(
-                                        f'\033[32mPackage \033[0m"{pkgname}" \033[32mis up-to-date!\033[0m'
+                                        f'\033[32mPackage \033[0m"{pkgname}" \033[32mis up-to-date with repo #{j}.\033[0m'
                                     )
                                     logf.write(
                                         f'Package "{pkgname}" is up-to-date!\n'
                                     )
-                        else:
-                            if conf.debug:
-                                print(
-                                    f'\033[93mPackage \033[0m"{pkgname}" \033[93mCould not be matched.\033[0m'
-                                )
-                                logf.write(
-                                    f'Package "{pkgname}" Could not be matched.\n'
-                                )
-                    else:
-                        if conf.debug:
-                            print(f'Package "{pkgname}" ignored.')
-                            logf.write(f'Package "{pkgname}" ignored.\n')
+                    if (not found_anywhr) and conf.debug:
+                        print(
+                            f'\033[93mPackage \033[0m"{pkgname}" \033[93mCould not be matched.\033[0m'
+                        )
+                        logf.write(
+                            f'Package "{pkgname}" Could not be matched.\n'
+                        )
+                elif conf.debug:
+                    print(f'Package "{pkgname}" ignored.')
+                    logf.write(f'Package "{pkgname}" ignored.\n')
+
 
         except Exception as err:
             print("Failed to complete! Error:")
