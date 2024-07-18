@@ -1,6 +1,12 @@
 # BredOS multilib repository
 
+![Outdated Packages](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/rippanda12/b5759b3d8a067b7e96f73934f43bf2ce/raw/outdated-packages-multilib.json)
 
+## Adding the repository
+```ini
+[BredOS-multilib]
+Include = /etc/pacman.d/bredos-mirrorlist
+```
 
 ## Building a package
 

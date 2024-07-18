@@ -5,9 +5,9 @@ binutils-gdb
 /linux-api-headers/*.xz
 /linux-api-headers/*.sign
 lists.log
-0-repo
-1-repo
+*-repo/
 __pycache__
 /gcc/gcc
 built/
+.vscode/
 

@@ -1,10 +1,11 @@
-#! /usr/bin/python
+import concurrent.futures
 from subprocess import check_output
 from time import sleep
 import urllib.request
 from tarfile import open as topen
 from os import mkdir, listdir
 from shutil import rmtree
+import pyalpm
 
 import conf
 
@@ -21,7 +22,7 @@ def pkname(fp):
             while lines[inc] != "%NAME%\n":
                 inc += 1
             res = lines[inc + 1][:-1]
-    except:
+    except Exception:
         pass
     return res
 
@@ -38,7 +39,7 @@ def pkver(fp):
             while lines[inc] != "%VERSION%\n":
                 inc += 1
             res = lines[inc + 1][:-1]
-    except:
+    except Exception:
         pass
     return res
 
@@ -67,6 +68,17 @@ def clean() -> None:
             rmtree(i)
 
 
+def preprocess_repo(repo_index):
+    repo_data = {}
+    for pkg_dir in listdir(f"{repo_index}-repo"):
+        desc_path = f"./{repo_index}-repo/{pkg_dir}/desc"
+        pkgname = pkname(desc_path)
+        pkgver = pkver(desc_path)
+        if pkgname and pkgver:
+            repo_data[pkgname] = pkgver
+    return repo_data
+
+
 def lists() -> list:
     """
     Use this function to generate a list of updatable packages.
@@ -76,45 +88,34 @@ def lists() -> list:
     with open("lists.log", "w") as logf:
         try:
             clean()
-            listlen = download()
-            drs = []
-            for i in range(len(conf.repos)):
-                drs.append(listdir(str(i) + "-repo"))
-            for i in drs[0]:
-                pkgname = pkname(f"./0-repo/{i}/desc")
-                repover = pkver(f"./0-repo/{i}/desc")
+            download()
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                futures = [executor.submit(preprocess_repo, i) for i in range(len(conf.repos))]
+                repo_data_list = [future.result() for future in concurrent.futures.as_completed(futures)]
+                
+            main_repo_data = repo_data_list[0]
+            other_repos_data = repo_data_list[1:]
+
+            for pkgname, repover in main_repo_data.items():
                 found_anywhr = False
-                if pkgname is None or repover is None:
-                    raise RuntimeError("Package unparsable!!")
                 if pkgname not in conf.ignore:
-                    for j in range(1, len(drs)):
-                        aurver = None # May remain None
-                        for k in drs[j]:
-                            if k[:2] == i[:2]: # Speedup
-                                aurname = pkname(f"./1-repo/{k}/desc")
-                                if aurname == pkgname or (
-                                    pkgname in conf.alias
-                                    and (
-                                        (
-                                            isinstance(conf.alias[pkgname], list)
-                                            and aurname in conf.alias[pkgname]
-                                        )
-                                        or (
-                                            isinstance(conf.alias[pkgname], str)
-                                            and aurname == conf.alias[pkgname]
-                                        )
-                                    )
-                                ):
-                                    aurver = pkver(f"./1-repo/{k}/desc")
-                                    found_anywhr = True
-                                    break
+                    for j, other_repo_data in enumerate(other_repos_data, start=1):
+                        aurver = None
+                        if pkgname in conf.alias:
+                            if conf.debug:
+                                print(f'Package "{pkgname}" is aliased.')
+                                logf.write(f'Package "{pkgname}" is aliased.\n')
+                            unalias = pkgname
+                            pkgname = conf.alias[pkgname]
+                        else:
+                            unalias = pkgname
+
+                        aurver = other_repo_data.get(pkgname, None)
+                        found_anywhr = found_anywhr or aurver is not None
+                        pkgname = unalias 
 
                         if aurver is not None:
-                            compare = (
-                                check_output(["/usr/bin/vercmp", aurver, repover])
-                                .decode()
-                                .strip(" ")
-                            )
+                            compare = pyalpm.vercmp(aurver, repover)
                             if int(compare) < 0:
                                 if conf.debug:
                                     print(
@@ -123,7 +124,7 @@ def lists() -> list:
                                     logf.write(
                                         f'Package "{pkgname}" is outdated! "{repover}" > "{aurver}"\n'
                                     )
-                                    res.append(pkgname)
+                                res.append(pkgname)
                             elif int(compare) > 0:
                                 if conf.debug:
                                     print(
@@ -150,7 +151,6 @@ def lists() -> list:
                 elif conf.debug:
                     print(f'Package "{pkgname}" ignored.')
                     logf.write(f'Package "{pkgname}" ignored.\n')
-
 
         except Exception as err:
             print("Failed to complete! Error:")
