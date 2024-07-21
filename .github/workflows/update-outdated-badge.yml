@@ -11,31 +11,31 @@ on:
 jobs:
   update-badge:
     runs-on: ubuntu-latest
-    services:
-      arch:
-        image: archlinux:latest
-        options: --privileged
+    container: 
+      image: bredos/bredos:latest
+      ports:
+        - 80
+      options: --privileged
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       
-      - name: Set up Docker Environment
+      - name: Install dependencies
         run: |
-          docker run --name arch-container -d archlinux:latest tail -f /dev/null
-          docker exec arch-container pacman -Sy --noconfirm --needed pyalpm github-cli
-          docker cp . arch-container:/src
+          init-docker
+          pacman -Sy --noconfirm --needed pyalpm github-cli
       
       - name: Update Gist
         env:
           GH_TOKEN: ${{ secrets.GIST_TOKEN }}
           GIST_ID: 'b5759b3d8a067b7e96f73934f43bf2ce'
         run: |
-          OUTDATED=$(docker exec arch-container /usr/bin/sh -c 'cd /src/ && python -c "import compare; print(len(compare.lists()))"')
+          OUTDATED=$(python -c "import compare; print(len(compare.lists()))")
           echo "Outdated packages: $OUTDATED"
-          if [ $OUTDATED -eq 1 ]; then
-            COLOR="yellow"
-          else
+          if [ "$OUTDATED" -gt 0 ]; then
             COLOR="red"
+          else
+            COLOR="green"
           fi
           gh api --method PATCH -H "Accept: application/vnd.github+json" \
             /gists/$GIST_ID \
