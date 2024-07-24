@@ -1,6 +1,6 @@
 # Maintainer: Bart De Vries <bart at mogwai dot be>
 
-pkgname=box86
+pkgname=box86-rk3588-git
 pkgver=0.3.6
 pkgrel=1
 pkgdesc='Linux Userspace x86 Emulator with a twist'
@@ -9,15 +9,22 @@ url='https://github.com/ptitSeb/box86'
 license=('MIT')
 install='box86.install'
 depends=('lib32-gcc-libs')
-optdepends=('gl4es: OpenGL 2 for GLES 2 devices')
+optdepends=('lib32-gl4es: OpenGL 2 for GLES 2 devices')
 makedepends=('git' 'cmake' 'python')
-source=("${pkgname}-${pkgver}.tar.gz::https://github.com/ptitSeb/box86/archive/v${pkgver}.tar.gz"
+provides=('box86' 'box86-git' 'box86-rk3588-git' 'box86-rk3588')
+source=("git+https://github.com/ptitSeb/box86.git"
         "box86.install")
 sha256sums=('bba944fc21f07afc4b9f3de694826819024dd2f391085f11de0e63a210e937ff'
             'ecd38bdad06c256b2655bd4707d7b5248611073f751357424f2fc6327743e299')
 
+pkgver() {
+  cd box86
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+
 build() {
-  cd ${pkgname}-${pkgver}
+  cd box86
 
   export CC="armv7h-linux-gnueabihf-gcc"
   export CXX="armv7h-linux-gnueabihf-g++"
@@ -26,13 +33,14 @@ build() {
         -DCMAKE_INSTALL_LIBDIR=lib32 \
         -DCMAKE_INSTALL_INCLUDEDIR=include32 \
         -DARM_DYNAREC=ON \
+        -DRK3588=1 \
         -DCMAKE_BUILD_TYPE=RelWithDebInfo \
         -DCMAKE_INSTALL_PREFIX=/usr
   make -C build
 }
 
 package() {
-  cd ${pkgname}-${pkgver}/build
+  cd box86/build
   make DESTDIR=${pkgdir} install
 
   install -Dm644 ../LICENSE -t "${pkgdir}/usr/share/licenses/${pkgname}/"

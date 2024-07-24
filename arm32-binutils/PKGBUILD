@@ -66,7 +66,9 @@ package() {
   mv "$pkgdir"/usr/$_target/lib/ldscripts "$pkgdir"/usr/lib32/ldscripts -v
   #libiberty.a
   mv "$pkgdir"/usr/lib/libiberty.a "$pkgdir"/usr/lib32/libiberty.a -v
+  cp "$pkgdir"/usr/aarch64-unknown-linux-gnu/$_target/lib/* "$pkgdir"/usr/lib32 -v
+  cp "$pkgdir"/usr/aarch64-unknown-linux-gnu/$_target/include/* "$pkgdir"/usr/include32 -v
 
-  rm -rf "$pkgdir"/usr/{etc,include,lib,share,$_target/lib}
+  rm -rf "$pkgdir"/usr/{etc,include,lib,share,$_target/lib,aarch64-unknown-linux-gnu/}
 }
 

@@ -1,5 +1,5 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index 0eb998b..48f2582 100644
+index 0eb998b..b8726f1 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
 @@ -23,26 +23,30 @@ pkgver() {
@@ -38,6 +38,6 @@ index 0eb998b..48f2582 100644
 +  DESTDIR="${pkgdir}" cmake --install build
 +  rm -r "${pkgdir}"/usr/bin
 +  mv ${pkgdir}/usr/include ${pkgdir}/usr/include32
-+  sed -i 's|${prefix}/include|${prefix}/include32|' ${pkgdir}/usr/lib32/pkgconfig/spirv-llvm-translator.pc
++  sed -i 's|${prefix}/include|${prefix}/include32|' ${pkgdir}/usr/lib32/pkgconfig/*.pc
    install -Dm644 ${_srcname}/LICENSE.TXT -t "${pkgdir}"/usr/share/licenses/${pkgname}/
  }

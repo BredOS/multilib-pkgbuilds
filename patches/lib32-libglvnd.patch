@@ -1,8 +1,16 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index 44b321b..2fcaa58 100644
+index 44b321b..3dbe256 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
-@@ -14,13 +14,14 @@ source=("https://gitlab.freedesktop.org/glvnd/libglvnd/-/archive/v$pkgver/libglv
+@@ -7,23 +7,26 @@ pkgdesc="The GL Vendor-Neutral Dispatch library"
+ arch=('x86_64')
+ url="https://gitlab.freedesktop.org/glvnd/libglvnd"
+ license=('custom:BSD-like')
+-makedepends=('lib32-libx11' 'lib32-libxext' 'xorgproto' 'python' 'meson')
++makedepends=('lib32-libx11' 'lib32-libxext' 'lib32-xorgproto' 'python' 'meson')
+ provides=('lib32-libgl' 'lib32-libegl' 'lib32-libgles')
+ provides+=(libEGL.so libGL.so libGLESv2.so libGLX.so libGLdispatch.so libOpenGL.so)
+ source=("https://gitlab.freedesktop.org/glvnd/libglvnd/-/archive/v$pkgver/libglvnd-v$pkgver.tar.gz")
  sha512sums=('7b6eb8e075b48f1d915b892044adc3260547d74ed61d1e2fa6c5f0f8c3527754abea314181e088626d4fd58bb221085e5288c4758d828e171c7dcb0e4991745c')
  
  build() {
@@ -20,8 +28,13 @@ index 44b321b..2fcaa58 100644
 +    -D headers=true \
      -D gles1=false
  
++  sed -i 's|-I/usr/include |-I/usr/include32 |' build/{build.ninja,compile_commands.json}
    meson compile -C build
-@@ -32,8 +33,6 @@ package() {
++
+ }
+ 
+ package() {
+@@ -32,8 +35,6 @@ package() {
  
    meson install -C build --destdir "$pkgdir"
  

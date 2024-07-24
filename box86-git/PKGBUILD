@@ -1,0 +1,56 @@
+# Maintainer: Bart De Vries <bart at mogwai dot be>
+
+pkgname=box86-git
+pkgver=0.3.6
+pkgrel=1
+pkgdesc='Linux Userspace x86 Emulator with a twist'
+arch=('armv7h')
+url='https://github.com/ptitSeb/box86'
+license=('MIT')
+install='box86.install'
+depends=('lib32-gcc-libs')
+optdepends=('lib32-gl4es: OpenGL 2 for GLES 2 devices')
+makedepends=('git' 'cmake' 'python')
+provides=('box86' 'box86-git')
+conflics=('box86' 'box86-rk3588-git')
+replaces=('box86' 'box86-rk3588-git')
+source=("git+https://github.com/ptitSeb/box86.git"
+        "box86.install")
+sha256sums=('bba944fc21f07afc4b9f3de694826819024dd2f391085f11de0e63a210e937ff'
+            'ecd38bdad06c256b2655bd4707d7b5248611073f751357424f2fc6327743e299')
+
+pkgver() {
+  cd box86
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+
+build() {
+  cd box86
+
+  export CC="armv7h-linux-gnueabihf-gcc"
+  export CXX="armv7h-linux-gnueabihf-g++"
+  
+  cmake -B build -S . \
+        -DCMAKE_INSTALL_LIBDIR=lib32 \
+        -DCMAKE_INSTALL_INCLUDEDIR=include32 \
+        -DARM_DYNAREC=ON \
+        -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+        -DCMAKE_INSTALL_PREFIX=/usr
+  make -C build
+}
+
+package() {
+  cd box86/build
+  make DESTDIR=${pkgdir} install
+
+  install -Dm644 ../LICENSE -t "${pkgdir}/usr/share/licenses/${pkgname}/"
+
+  # Install documentation
+  install -d "${pkgdir}/usr/share/doc/${pkgname}/"
+  cp -R ../docs/* "${pkgdir}/usr/share/doc/${pkgname}/"
+
+  find "${pkgdir}"/usr/share/doc/${pkgname} -type f -exec chmod 0644 {} \;
+  find "${pkgdir}"/usr/share/doc/${pkgname} -type d -exec chmod 0755 {} \;
+}
+

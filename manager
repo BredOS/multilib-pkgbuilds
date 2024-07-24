@@ -1,0 +1,243 @@
+#! /usr/bin/python
+
+import os
+import argparse
+import tempfile
+from pyrunning import logging, LogMessage, LoggingHandler, Command, LoggingLevel
+from functools import partial
+
+import conf
+
+# Set the script_dir as a global variable
+script_dir = os.path.abspath(os.path.dirname(__file__))
+
+
+# Initialize logging
+def setup_logging() -> logging.Logger:
+    logger = logging.getLogger("manager")
+    logger.setLevel(logging.DEBUG)
+    log_file = os.path.abspath(os.path.join(".", "manager.log"))
+
+    log_file_handler = logging.FileHandler(log_file)
+    log_file_handler.setLevel(logging.DEBUG)
+    log_file_formatter = logging.Formatter(
+        "%(asctime)s [%(levelname)8s] %(message)s",
+    )
+    log_file_handler.setFormatter(log_file_formatter)
+    logger.addHandler(log_file_handler)
+
+    log_error_handler = logging.StreamHandler()
+    log_error_handler.setLevel(logging.DEBUG)
+    log_error_formatter = logging.Formatter("%(levelname)8s: %(message)s")
+    log_error_handler.setFormatter(log_error_formatter)
+    logger.addHandler(log_error_handler)
+
+    return logger
+
+
+def lp(message, mode="info") -> None:
+    if mode == "info":
+        LogMessage.Info(message).write(logging_handler=logging_handler)
+    elif mode == "debug":
+        LogMessage.Debug(message).write(logging_handler=logging_handler)
+    elif mode == "warn":
+        LogMessage.Warning(message).write(logging_handler=logging_handler)
+    elif mode == "crit":
+        LogMessage.Critical(message).write(logging_handler=logging_handler)
+    elif mode == "error":
+        LogMessage.Error(message).write(logging_handler=logging_handler)
+    elif mode == "exception":
+        LogMessage.Exception(message).write(logging_handler=logging_handler)
+    else:
+        raise ValueError("Invalid mode.")
+
+
+def post_run_cmd(info, exitcode) -> None:
+    if exitcode:
+        lp(f"Command failed with exit code {exitcode}", mode="error")
+        raise Exception(f"Command failed with exit code {exitcode}")
+
+
+def lrun(cmd: list, shell: bool = False, silent: bool = False, cwd: str = ".") -> None:
+    if shell:
+        new_cmd = " ".join(cmd)
+        Command.Shell(
+            new_cmd,
+            is_silent=silent,
+            working_directory=cwd,
+            post_run_function=partial(post_run_cmd),
+            do_send_output_to_post_run_function=True,
+            do_send_exit_code_to_post_run_function=True,
+        ).run_log_and_wait(logging_handler=logging_handler)
+    else:
+        Command(
+            cmd,
+            is_silent=silent,
+            working_directory=cwd,
+            post_run_function=partial(post_run_cmd),
+            do_send_output_to_post_run_function=True,
+            do_send_exit_code_to_post_run_function=True,
+        ).run_log_and_wait(logging_handler=logging_handler)
+
+
+# Function to apply a patch
+def apply_patch(patch_name: str, dir: str):
+    patch_file = os.path.join(script_dir, f"patches/{patch_name}.patch")
+    # lrun(f"patch -p1 < {patch_file}", silent=False)
+    lrun(["patch", "-p1", "-i", patch_file], silent=False, cwd=dir)
+
+
+# Function to generate a patch
+def generate_patch(pkgname: str) -> None:
+    pkg_dir = os.path.join(script_dir, pkgname)
+
+    patch_path = os.path.join(script_dir, f"patches/{pkgname}.patch")
+    lrun(["git", "diff", ">", patch_path], shell=True, cwd=pkg_dir)
+
+
+# Function to pull a package
+def pull_pkg(
+    package: str, aur: bool = False, silent: bool = False, dir: str = script_dir
+) -> None:
+    if aur:
+        lrun(["paru", "-G", package], silent=silent, cwd=dir)
+    else:
+        lrun(["pkgctl", "repo", "clone", package], silent=silent, cwd=dir)
+
+
+# Function to build a package
+def build_pkg(package, generate_patch_flag=False):
+    tempdir = tempfile.mkdtemp()
+    # makepkg_flags = "-srAfi --nocheck --noconfirm --skippgpcheck --skipchecksums"
+    makepkg_flags = [
+        "-srAfi",
+        "--nocheck",
+        "--noconfirm",
+        "--skippgpcheck",
+        "--skipchecksums",
+    ]
+    for pkg in package.split(","):
+        if pkg in conf.localpkgs:
+            makepkg_flags.append(f"--config={os.path.join(script_dir, 'makepkg.conf')}")
+            is_local = True
+        elif pkg in conf.localpkgs_without_makepkg_conf:
+            is_local = True
+        else:
+            makepkg_flags.append(f"--config={os.path.join(script_dir, 'makepkg.conf')}")
+            is_local = False
+
+        dest_pkg = os.path.join(tempdir, pkg)
+        src_pkg = os.path.join(script_dir, pkg)
+
+        if is_local:
+            os.makedirs(dest_pkg, exist_ok=True)
+            lrun(["cp", "-r", f"{src_pkg}/*", f"{dest_pkg}"], shell=True)
+        else:
+            if generate_patch_flag:
+                generate_patch(pkg)
+            pull_pkg(pkg, dir=tempdir)
+            apply_patch(pkg, dest_pkg)
+
+        lrun(["makepkg"] + makepkg_flags, silent=False, cwd=dest_pkg)
+
+        lp("Done.")
+        # lrun(f"pacman -Ql {pkg}", silent=False)
+        lrun(["pacman", "-Ql", pkg], silent=False)
+
+
+def check_for_outdated_packages() -> list:
+    import compare
+
+    return compare.lists()
+
+
+def update_outdated_packages() -> None:
+    outdated_packages = check_for_outdated_packages()
+    for package in outdated_packages:
+        build_pkg(package)
+
+
+def pull_and_patch(pkgname):
+    pull_pkg(pkgname, silent=True)
+    apply_patch(pkgname, pkgname)
+    print(
+        f"Pulled and patched {pkgname}. You can now edit the PKGBUILD and build with manager buildpkg -g {pkgname}"
+    )
+
+
+# Main function
+def main():
+    parser = argparse.ArgumentParser(
+        description="Utility script for managing packages with BredOS patches"
+    )
+    subparsers = parser.add_subparsers(dest="command")
+
+    # Subparser for applypatch
+    applypatch_parser = subparsers.add_parser(
+        "applypatch", help="Apply a patch to a package"
+    )
+    applypatch_parser.add_argument("pkg", type=str, help="Package name")
+
+    # Subparser for buildpkg
+    buildpkg_parser = subparsers.add_parser(
+        "buildpkg", help="Build a package with BredOS patches"
+    )
+    buildpkg_parser.add_argument(
+        "-g", action="store_true", help="Generate a patch from the current directory"
+    )
+    buildpkg_parser.add_argument(
+        "package", type=str, help="Package name or comma seperated list of packages"
+    )
+
+    # Subparser for genpatch
+    genpatch_parser = subparsers.add_parser(
+        "genpatch", help="Generate a patch between original and new PKGBUILD"
+    )
+    genpatch_parser.add_argument("pkgname", type=str, help="Package name")
+
+    # Subparser for pullpkg
+    pullpkg_parser = subparsers.add_parser(
+        "pullpkg", help="Pull a PKGBUILD from the Arch Repo or AUR"
+    )
+    pullpkg_parser.add_argument(
+        "-a", action="store_true", help="Pull from the Arch User Repository (AUR)"
+    )
+    pullpkg_parser.add_argument(
+        "package", type=str, help="Package name or comma seperated list of packages"
+    )
+
+    update_outdated_parser = subparsers.add_parser(
+        "updateoldpkgs", help="Update outdated packages"
+    )
+
+    pull_and_edit_parser = subparsers.add_parser(
+        "localedit",
+        help="Pulls a package in the current directory and applies the patch made by BredOS so you can edit it before building",
+    )
+    pull_and_edit_parser.add_argument("package", type=str, help="Package name")
+
+    args = parser.parse_args()
+
+    logger = setup_logging()
+    global logging_handler
+    logging_handler = LoggingHandler(logger=logger, logging_functions=[])
+
+    if args.command == "applypatch":
+        apply_patch(args.pkg, os.path.join(script_dir, args.pkg))
+    elif args.command == "buildpkg":
+        build_pkg(args.package, generate_patch_flag=args.g)
+    elif args.command == "genpatch":
+        generate_patch(args.pkgname)
+    elif args.command == "pullpkg":
+        for pkg in args.package.split(","):
+            pull_pkg(pkg, aur=args.a)
+    elif args.command == "updateoldpkgs":
+        update_outdated_packages()
+    elif args.command == "localedit":
+        pull_and_patch(args.package)
+    else:
+        parser.print_usage()
+
+
+if __name__ == "__main__":
+    main()

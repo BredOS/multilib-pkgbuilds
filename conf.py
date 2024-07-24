@@ -16,7 +16,6 @@ ignore = [
     "lib32-libpipewire",
     "lib32-pipewire-jack",
     "lib32-pipewire-v4l2",
-
 ]
 
 alias = {
@@ -29,5 +28,31 @@ alias = {
     "lib32-libomxil-bellagio": "libomxil-bellagio",
     "lib32-directx-headers": "directx-headers",
     "lib32-cunit": "cunit",
-
 }
+
+localpkgs = [
+    "lib32-glibc",
+    "lib32-xtrans",
+    "lib32-xorgproto",
+    "lib32-vulkan-headers",
+    "lib32-mesa-panfork-git",
+    "lib32-valgrind",
+    "lib32-nss",
+    "lib32-libmysofa",
+    "lib32-cunit",
+    "lib32-directx-headers",
+    "lib32-libomxil-bellagio",
+    "box86-git",
+    "box86-rk3588-git",
+    "lib32-gl4es-git",
+]
+localpkgs_without_makepkg_conf = [
+    "arm32-binutils",
+    "arm32-gcc",
+    "arm32-linux-api-headers",
+    "arm32-gcc-bootstrap",
+    "arm32-filesystem",
+    "box64-git",
+    "box64-rk3588-git",
+    "gl4es-git",
+]

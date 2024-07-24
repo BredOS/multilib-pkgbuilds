@@ -15,7 +15,7 @@
 pkgname=lib32-mesa-panfork-git
 pkgdesc="Libgl & gbm with panfrost for Mali G610 from icecream95 (32-bit)"
 pkgver=r164486.2e8aead0016
-pkgrel=1
+pkgrel=2
 arch=('aarch64')
 makedepends=(
   lib32-clang
@@ -60,6 +60,7 @@ makedepends=(
 url="https://gitlab.com/hbiyik/mesa"
 license=('custom')
 options=('!lto')
+provides=("lib32-mesa-libgl" "lib32-opengl-driver" "lib32-mesa" "lib32-libgl")
 source=("mesa::git+https://github.com/hbiyik/mesa.git#branch=panfork"
         LICENSE)
 sha512sums=('SKIP'

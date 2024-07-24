@@ -1,8 +1,16 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index b599b4a..d05de92 100644
+index b599b4a..b83fde9 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
-@@ -44,7 +44,7 @@ prepare() {
+@@ -28,6 +28,7 @@ makedepends=(
+   git
+   meson
+   valgrind
++  lib32-xorgproto
+ )
+ _commit=3909090108bb2db55330e3eb148aebe664735363  # tags/1.18.0^0
+ source=("git+https://gitlab.freedesktop.org/cairo/cairo.git#commit=$_commit")
+@@ -44,7 +45,7 @@ prepare() {
  
  build() {
    local meson_options=(
@@ -11,7 +19,15 @@ index b599b4a..d05de92 100644
      -D dwrite=disabled
      -D gtk_doc=false
      -D spectre=disabled
-@@ -65,7 +65,7 @@ package_lib32-cairo() {
+@@ -53,6 +54,7 @@ build() {
+   )
+ 
+   arch-meson cairo build "${meson_options[@]}"
++  sed -i 's|-I/usr/include |-I/usr/include32 |' build/build.ninja
+   meson compile -C build
+ }
+ 
+@@ -65,7 +67,7 @@ package_lib32-cairo() {
  
    meson install -C build --destdir "$pkgdir"
  

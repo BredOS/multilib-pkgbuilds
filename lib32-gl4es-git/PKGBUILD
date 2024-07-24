@@ -1,0 +1,37 @@
+# Maintainer: Michał Wojdyła < micwoj9292 at gmail dot com >
+
+pkgname=lib32-gl4es-git
+pkgver=1.1.4
+pkgrel=1
+pkgdesc='OpenGL 2.1/1.5 to GL ES 2.0/1.1 translation library (32-bit)'
+arch=('aarch64')
+url='https://github.com/ptitSeb/gl4es'
+license=('MIT')
+depends=('lib32-glibc' 'lib32-libx11')
+provides=('lib32-gl4es')
+makedepends=('cmake')
+source=("git+$url.git")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd gl4es
+  git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+build() {
+  cd gl4es
+  export CC="armv7h-linux-gnueabihf-gcc"
+  export CXX="armv7h-linux-gnueabihf-g++"
+  cmake -B build -S . \
+        -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+        -DCMAKE_INSTALL_PREFIX=/usr
+  make -C build
+}
+
+package() {
+  cd gl4es/build
+  make DESTDIR=${pkgdir} install
+  mv "${pkgdir}"/usr/lib "${pkgdir}"/usr/lib32
+  mv "${pkgdir}"/usr/include "${pkgdir}"/usr/include32
+  install -Dm644 ../LICENSE -t "${pkgdir}/usr/share/licenses/${pkgname}/"
+}

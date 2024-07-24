@@ -4,12 +4,12 @@
 _target=armv7h-linux-gnueabihf
 pkgname=arm32-gcc
 pkgver=14.1.0
-pkgrel=2
+pkgrel=3
 pkgdesc='The GNU Compiler Collection - cross compiler for armv7h'
 arch=(aarch64)
 url='https://gcc.gnu.org/'
 license=(GPL LGPL FDL)
-depends=(libmpc zstd libisl arm32-filesystem lib32-glibc arm32-binutils)
+depends=(libmpc zstd libisl arm32-filesystem lib32-glibc arm32-binutils arm32-linux-api-headers)
 makedepends=(arm32-binutils git arm32-linux-api-headers)
 provides=(gcc-multilib arm32-gcc lib32-gcc-libs arm32-gcc-fortran arm32-gcc-objc arm32-gcc-lto)
 conflicts=(arm32-gcc)

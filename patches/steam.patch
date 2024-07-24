@@ -1,5 +1,5 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index 99dcdb3..d948ac5 100644
+index 99dcdb3..eccc89a 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
 @@ -25,7 +25,6 @@ depends=(
@@ -19,15 +19,39 @@ index 99dcdb3..d948ac5 100644
    lib32-glibc
    lib32-libxcrypt
    lib32-libxcrypt-compat
-@@ -46,18 +45,20 @@ depends_x86_64=(
+@@ -46,18 +45,44 @@ depends_x86_64=(
    lib32-alsa-plugins
    lib32-libgpg-error
    lib32-nss
 -  lib32-vulkan-driver
    lib32-vulkan-icd-loader
-+  box86-rk3xxx
-+  box64-rk3xxx
-+  lib32-libxdamage lib32-libxtst lib32-libpulse lib32-dbus lib32-libsndfile lib32-libogg lib32-libvorbis lib32-libxi lib32-libxrandr lib32-xrender lib32-vulkan-swrast vulkan-swrast lib32-vulkan-mesa-layers vulkan-panfrost lib32-vulkan-panfrost  vulkan-mesa-layers lib32-libsm lib32-libice lib32-cairo lib32-gnutls lib32-gmp lib32-libxinerama lib32-libxcursor lib32-libpng12 lib32-libjpeg-turbo lib32-libxcomposite lib32-openal
++  box86
++  box64
++  lib32-libxdamage
++  lib32-libxtst
++  lib32-libpulse
++  lib32-dbus
++  lib32-libsndfile
++  lib32-libogg
++  lib32-libvorbis
++  lib32-libxi
++  lib32-libxrandr
++  lib32-libxrender
++  lib32-vulkan-mesa-layers
++  vulkan-mesa-layers
++  vulkan-driver
++  lib32-vulkan-driver
++  lib32-libsm
++  lib32-libice
++  lib32-cairo
++  lib32-gnutls
++  lib32-gmp
++  lib32-libxinerama
++  lib32-libxcursor
++  lib32-libpng12
++  lib32-libjpeg-turbo
++  lib32-libxcomposite
++  lib32-openal
  )
  optdepends=('steam-native-runtime: steam native runtime support')
  source=(https://repo.steampowered.com/${pkgname}/pool/${pkgname}/s/${pkgname}/${pkgname}_${pkgver}{.tar.gz,.dsc}
@@ -44,10 +68,13 @@ index 99dcdb3..d948ac5 100644
  
  prepare() {
 diff --git a/steam-runtime.sh b/steam-runtime.sh
-index fc10ad5..0c82f1d 100755
+index fc10ad5..b45861d 100755
 --- a/steam-runtime.sh
 +++ b/steam-runtime.sh
-@@ -1,2 +1,3 @@
+@@ -1,2 +1,6 @@
  #!/bin/sh
-+
++export STEAMOS=1
++export STEAM_RUNTIME=1
++export DBUS_FATAL_WARNINGS=0
++export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
  exec /usr/lib/steam/steam "$@"

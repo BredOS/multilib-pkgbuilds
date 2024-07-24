@@ -1,5 +1,5 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index 90876be..f2903c4 100644
+index 90876be..afb1715 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
 @@ -9,7 +9,7 @@ pkgdesc="X11 Inter-Client Exchange library (32-bit)"
@@ -7,7 +7,7 @@ index 90876be..f2903c4 100644
  url="https://xorg.freedesktop.org/"
  depends=('lib32-glibc' $_pkgbasename)
 -makedepends=('xtrans>=1.2.5' 'xorg-util-macros' 'xorgproto')
-+makedepends=('lib32-xtrans>=1.2.5' 'xorg-util-macros' 'lib32-xorgproto')
++makedepends=('lib32-xtrans>=1.2.5' 'xorg-util-macros' 'lib32-xorgproto' 'xtrans' 'xorgproto')
  source=(${url}/releases/individual/lib/libICE-${pkgver}.tar.xz{,.sig})
  license=('custom')
  sha1sums=('7e4b51bb5633d7fc7d1f4e161d231591ab545f0b'

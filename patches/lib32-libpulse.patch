@@ -1,5 +1,5 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index d9f6cd9..493b877 100644
+index d9f6cd9..51eb1d7 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
 @@ -21,7 +21,7 @@ depends=(
@@ -7,7 +7,7 @@ index d9f6cd9..493b877 100644
    git
    lib32-glib2
 -  lib32-gtk3
-+
++  lib32-valgrind
    lib32-speexdsp
    meson
    valgrind

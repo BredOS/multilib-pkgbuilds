@@ -18,6 +18,8 @@ sha256sums=('212455eeab2cef5d93b1b991e548afe184f294428118f747989a97677e19ab2a')
 build() {
   cd Vulkan-Headers*
 
+  export CC="armv7h-linux-gnueabihf-gcc"
+  export CXX="armv7h-linux-gnueabihf-g++"
   rm -rf build ; mkdir build ; cd build
   cmake -DCMAKE_INSTALL_PREFIX=/usr \
     -DCMAKE_INSTALL_INCLUDEDIR=include32 \

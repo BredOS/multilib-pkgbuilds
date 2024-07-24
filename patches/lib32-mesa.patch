@@ -1,5 +1,5 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index 7120b94..abb0d02 100644
+index d5eeb17..ca913ff 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
 @@ -10,13 +10,13 @@ pkgname=(
@@ -17,8 +17,8 @@ index 7120b94..abb0d02 100644
 +  lib32-vulkan-panfrost
 +  lib32-vulkan-freedreno
  )
- pkgver=24.1.3
- pkgrel=1
+ pkgver=24.1.4
+ pkgrel=2
 @@ -46,7 +46,6 @@ makedepends=(
    lib32-llvm
    lib32-llvm-libs
@@ -40,30 +40,7 @@ index 7120b94..abb0d02 100644
  )
  options=(
    # GCC 14 LTO causes segfault in LLVM under si_llvm_optimize_module
-@@ -90,22 +90,6 @@ validpgpkeys=(
-   E3E8F480C52ADD73B278EE78E1ECBE07D7D70895 # Juan Antonio Suárez Romero (Igalia, S.L.) <jasuarez@igalia.com>
- )
- 
--# Rust crates for NVK, used as Meson subprojects
--declare -A _crates=(
--   paste          1.0.14
--   proc-macro2    1.0.70
--   quote          1.0.33
--   syn            2.0.39
--   unicode-ident  1.0.12
--)
--
--for _crate in "${!_crates[@]}"; do
--  _ver="${_crates[$_crate]}"
--  source+=(
--    "$_crate-$_ver.tar.gz::https://crates.io/api/v1/crates/$_crate/$_ver/download"
--  )
--done
--
- sha256sums=('63236426b25a745ba6aa2d6daf8cd769d5ea01887b0745ab7124d2ef33a9020d'
-             'SKIP'
-             '39278fbbf5fb4f646ce651690877f89d1c5811a3d4acb27700c1cb3cdb78fd3b'
-@@ -133,16 +117,18 @@ prepare() {
+@@ -141,16 +141,18 @@ prepare() {
  }
  
  build() {
@@ -86,7 +63,7 @@ index 7120b94..abb0d02 100644
      -D gles1=disabled
      -D glx=dri
      -D intel-clc=enabled
-@@ -153,11 +139,10 @@ build() {
+@@ -161,11 +163,10 @@ build() {
      -D platforms=x11,wayland
      -D valgrind=disabled
      -D video-codecs=all
@@ -100,7 +77,7 @@ index 7120b94..abb0d02 100644
  
    # Build only minimal debug info to reduce size
    CFLAGS+=" -g1"
-@@ -224,16 +209,8 @@ package_lib32-mesa() {
+@@ -232,16 +233,8 @@ package_lib32-mesa() {
      _pick clover $libdir/gallium-pipe
      _pick clover $libdir/libMesaOpenCL*
  
@@ -117,7 +94,7 @@ index 7120b94..abb0d02 100644
      _pick vkradeon $icddir/radeon_icd*.json
      _pick vkradeon $libdir/libvulkan_radeon.so
  
-@@ -242,8 +219,17 @@ package_lib32-mesa() {
+@@ -250,8 +243,17 @@ package_lib32-mesa() {
  
      _pick vkvirtio $icddir/virtio_icd*.json
      _pick vkvirtio $libdir/libvulkan_virtio.so
@@ -136,7 +113,7 @@ index 7120b94..abb0d02 100644
  
      # indirect rendering
      ln -sr $libdir/libGLX_{mesa,indirect}.so.0
-@@ -354,33 +340,6 @@ package_lib32-opencl-rusticl-mesa() {
+@@ -362,33 +364,6 @@ package_lib32-opencl-rusticl-mesa() {
    install -Dm644 mesa-$pkgver/docs/license.rst -t "$pkgdir/usr/share/licenses/$pkgname"
  }
  
@@ -170,7 +147,7 @@ index 7120b94..abb0d02 100644
  package_lib32-vulkan-mesa-layers() {
    pkgdesc="Mesa's Vulkan layers - 32-bit"
    depends=(
-@@ -514,3 +473,50 @@ package_lib32-vulkan-virtio() {
+@@ -522,3 +497,50 @@ package_lib32-vulkan-virtio() {
  }
  
  # vim:set sw=2 sts=-1 et:
