@@ -1,0 +1,59 @@
+# Maintainer Panda <panda@bredos.org
+
+pkgbase=steam-libs
+pkgname=('steam-libs-any' 'steam-libs-rk3588')
+pkgver=1.0
+pkgrel=3
+arch=('aarch64')
+url="http://bredos.org/"
+license=('GPLv3')
+
+common_deps=('lib32-vulkan-icd-loader'
+             'vulkan-mesa-layers'
+             'lib32-libxdamage'
+             'lib32-libxtst'
+             'lib32-libpulse'
+             'lib32-dbus'
+             'lib32-libsndfile'
+             'lib32-libogg'
+             'lib32-libvorbis'
+             'lib32-libxi'
+             'lib32-libxrandr'
+             'lib32-libxrender'
+             'lib32-vulkan-mesa-layers'
+             'lib32-libsm'
+             'lib32-libice'
+             'lib32-cairo'
+             'lib32-gnutls'
+             'lib32-gmp'
+             'lib32-libxinerama'
+             'lib32-libxcursor'
+             'lib32-libpng12'
+             'lib32-libjpeg-turbo'
+             'lib32-libxcomposite'
+             'lib32-openal'
+             'lib32-sdl2'
+             'libibus'
+             'box86-git'
+             'box64-git')
+
+package_steam-libs-any() {
+    pkgdesc="Steam libraries meta package"
+    provides=('steam-libs')
+    conflicts=('steam-libs-rk3588' 'steam-libs')
+    depends=("${common_deps[@]}"
+             'vulkan-driver'
+             'lib32-vulkan-driver')
+    :
+}
+
+package_steam-libs-rk3588() {
+    pkgdesc="Steam libraries meta package for RK3588"
+    provides=('steam-libs-rk3588' 'steam-libs')
+    conflicts=('steam-libs-rk3588' 'steam-libs')
+    depends=("${common_deps[@]}"
+             'lib32-mesa-panfork-git'
+             'lib32-vulkan-swrast'
+             'vulkan-swrast')
+    :
+}

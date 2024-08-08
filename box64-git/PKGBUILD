@@ -14,6 +14,7 @@ depends=('gcc-libs')
 makedepends=('git' 'cmake' 'python')
 provides=(box64)
 conflicts=(box64 box64-rk3588-git box64-rk3588)
+replaces=(box64-rk3588-git box64-rk3588)
 source=("git+https://github.com/ptitSeb/box64.git#branch=main"
         "box64-git.install")
 sha256sums=('SKIP'

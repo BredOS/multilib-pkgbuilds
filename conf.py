@@ -55,4 +55,5 @@ localpkgs_without_makepkg_conf = [
     "box64-git",
     "box64-rk3588-git",
     "gl4es-git",
+    "steam-libs",
 ]

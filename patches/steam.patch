@@ -1,5 +1,5 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index 99dcdb3..eccc89a 100644
+index 99dcdb3..d181c57 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
 @@ -25,7 +25,6 @@ depends=(
@@ -19,39 +19,11 @@ index 99dcdb3..eccc89a 100644
    lib32-glibc
    lib32-libxcrypt
    lib32-libxcrypt-compat
-@@ -46,18 +45,44 @@ depends_x86_64=(
-   lib32-alsa-plugins
-   lib32-libgpg-error
+@@ -48,16 +47,17 @@ depends_x86_64=(
    lib32-nss
--  lib32-vulkan-driver
+   lib32-vulkan-driver
    lib32-vulkan-icd-loader
-+  box86
-+  box64
-+  lib32-libxdamage
-+  lib32-libxtst
-+  lib32-libpulse
-+  lib32-dbus
-+  lib32-libsndfile
-+  lib32-libogg
-+  lib32-libvorbis
-+  lib32-libxi
-+  lib32-libxrandr
-+  lib32-libxrender
-+  lib32-vulkan-mesa-layers
-+  vulkan-mesa-layers
-+  vulkan-driver
-+  lib32-vulkan-driver
-+  lib32-libsm
-+  lib32-libice
-+  lib32-cairo
-+  lib32-gnutls
-+  lib32-gmp
-+  lib32-libxinerama
-+  lib32-libxcursor
-+  lib32-libpng12
-+  lib32-libjpeg-turbo
-+  lib32-libxcomposite
-+  lib32-openal
++  steam-libs
  )
  optdepends=('steam-native-runtime: steam native runtime support')
  source=(https://repo.steampowered.com/${pkgname}/pool/${pkgname}/s/${pkgname}/${pkgname}_${pkgver}{.tar.gz,.dsc}
