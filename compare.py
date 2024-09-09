@@ -90,9 +90,14 @@ def lists() -> list:
             clean()
             download()
             with concurrent.futures.ThreadPoolExecutor() as executor:
-                futures = [executor.submit(preprocess_repo, i) for i in range(len(conf.repos))]
-                repo_data_list = [future.result() for future in concurrent.futures.as_completed(futures)]
-                
+                futures = [
+                    executor.submit(preprocess_repo, i) for i in range(len(conf.repos))
+                ]
+                repo_data_list = [
+                    future.result()
+                    for future in concurrent.futures.as_completed(futures)
+                ]
+
             main_repo_data = repo_data_list[0]
             other_repos_data = repo_data_list[1:]
 
@@ -112,11 +117,11 @@ def lists() -> list:
 
                         aurver = other_repo_data.get(pkgname, None)
                         found_anywhr = found_anywhr or aurver is not None
-                        pkgname = unalias 
+                        pkgname = unalias
 
                         if aurver is not None:
                             compare = pyalpm.vercmp(aurver, repover)
-                            if int(compare) < 0:
+                            if int(compare) > 0:
                                 if conf.debug:
                                     print(
                                         f'\033[31mPackage \033[0m"{pkgname}" \033[31mis outdated in comparisson with repo #{j}!\033[0m "{repover}" > "{aurver}"'
@@ -125,7 +130,7 @@ def lists() -> list:
                                         f'Package "{pkgname}" is outdated! "{repover}" > "{aurver}"\n'
                                     )
                                 res.append(pkgname)
-                            elif int(compare) > 0:
+                            elif int(compare) < 0:
                                 if conf.debug:
                                     print(
                                         f'\033[36mPackage \033[0m"{pkgname}" \033[36mis ahead of repo #{j}! \033[0m"{repover}" < "{aurver}"'
@@ -138,16 +143,12 @@ def lists() -> list:
                                     print(
                                         f'\033[32mPackage \033[0m"{pkgname}" \033[32mis up-to-date with repo #{j}.\033[0m'
                                     )
-                                    logf.write(
-                                        f'Package "{pkgname}" is up-to-date!\n'
-                                    )
+                                    logf.write(f'Package "{pkgname}" is up-to-date!\n')
                     if (not found_anywhr) and conf.debug:
                         print(
                             f'\033[93mPackage \033[0m"{pkgname}" \033[93mCould not be matched.\033[0m'
                         )
-                        logf.write(
-                            f'Package "{pkgname}" Could not be matched.\n'
-                        )
+                        logf.write(f'Package "{pkgname}" Could not be matched.\n')
                 elif conf.debug:
                     print(f'Package "{pkgname}" ignored.')
                     logf.write(f'Package "{pkgname}" ignored.\n')
