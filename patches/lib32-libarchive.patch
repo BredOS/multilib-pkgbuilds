@@ -1,0 +1,40 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 7c79e25..0adb96a 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -47,7 +47,7 @@ prepare() {
+ 
+ build() {
+   local configure_options=(
+-    --build=i686-pc-linux-gnu
++    --build=armv7h-linux-gnueabihf
+     --disable-bsdcat
+     --disable-bsdcpio
+     --disable-bsdtar
+@@ -55,15 +55,13 @@ build() {
+     --disable-static
+     --libdir=/usr/lib32
+     --libexecdir=/usr/lib32
+-    --includedir=/usr/include/${_name}32
++    --includedir=/usr/include32
+     --prefix=/usr
+     --program-suffix="-32"
+     --without-nettle
+   )
+-
+-  export CFLAGS+=" -m32"
+-  export CXXFLAGS+=" -m32"
+-  export LDFLAGS+=" -m32"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
+   export PKG_CONFIG_PATH='/usr/lib32/pkgconfig'
+ 
+   cd $_name
+@@ -76,6 +74,6 @@ check() {
+ }
+ 
+ package() {
+-  make DESTDIR="$pkgdir/" install-libLTLIBRARIES install-pkgconfigDATA -C $_name
++  make DESTDIR="$pkgdir/" install-libLTLIBRARIES install-pkgconfigDATA install-includeHEADERS -C $_name
+   install -vDm 644 ./*.txt -t "$pkgdir/usr/share/licenses/$pkgname/"
+ }

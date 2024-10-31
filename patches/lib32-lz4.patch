@@ -1,0 +1,31 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 607b88b..c7cb5b6 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -18,8 +18,8 @@ sha256sums=('487f9bc24fdaf589e2f4bb23dd98b1f21a71b643db09251145616587c9468555')
+ 
+ build() {
+   cd ${_pkgname}
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
+   export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+   # do not use the main makefile, it calls sub make with -e
+   # exported CLFAGS by makepkg break the version. see FS#50071
+@@ -40,9 +40,14 @@ package() {
+   make install \
+     PREFIX=/usr \
+     LIBDIR=/usr/lib32 \
++    INCLUDEDIR=/usr/include32 \
+     PKGCONFIGDIR=/usr/lib32/pkgconfig \
+     DESTDIR="${pkgdir}"
+-  rm -rf "${pkgdir}"/usr/{share,include,bin}
++  rm -rf "${pkgdir}"/usr/{share,bin}
++  # shellcheck disable=SC2016
++  sed -i 's|${prefix}/include|${prefix}/include32|' "${pkgdir}"/usr/lib32/pkgconfig/liblz4.pc
++  # shellcheck disable=SC2016
++  sed -i 's|${prefix}/lib|${prefix}/lib32|' "${pkgdir}"/usr/lib32/pkgconfig/liblz4.pc
+ }
+ 
+ # vim: ts=2 sw=2 et:

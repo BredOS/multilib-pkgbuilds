@@ -16,6 +16,16 @@ ignore = [
     "lib32-libpipewire",
     "lib32-pipewire-jack",
     "lib32-pipewire-v4l2",
+    "lib32-jack2",
+    "lib32-libva-mesa-driver",
+    "lib32-mesa",
+    "lib32-mesa-vdpau",
+    "lib32-opencl-clover-mesa",
+    "lib32-nss",
+    "lib32-openal",
+    "lib32-spirv-llvm-translator",
+    "lib32-harfbuzz-cairo",
+    "lib32-harfbuzz-icu",
 ]
 
 alias = {

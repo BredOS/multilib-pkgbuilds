@@ -1,8 +1,8 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index a362b64..a3dc8e9 100644
+index 6875f69..59c30a6 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
-@@ -32,16 +32,16 @@ validpgpkeys=(38A644698C69787344E954CE29EE848AE2CCF3F4) # Andrew G. Morgan <morg
+@@ -35,9 +35,9 @@ validpgpkeys=(
  
  build() {
    local make_options=(
@@ -14,15 +14,16 @@ index a362b64..a3dc8e9 100644
      lib=lib32
      prefix=/usr
      sbindir=bin
-     -C $_name-$pkgver
-   )
- 
--  make "${make_options[@]}"
-+  make "${make_options[@]}" -j$(nproc)
+@@ -48,7 +48,7 @@ build() {
  }
  
  check() {
-@@ -53,6 +53,7 @@ package() {
+-  make test CC="gcc -m32" -k -C $_name
++  make test CC="armv7h-linux-gnueabihf-gcc" -k -C $_name
+ }
+ 
+ package() {
+@@ -56,6 +56,7 @@ package() {
      DESTDIR="$pkgdir"
      RAISE_SETFCAP=no
      lib=lib32
@@ -30,10 +31,10 @@ index a362b64..a3dc8e9 100644
      prefix=/usr
      sbindir=bin
      install
-@@ -66,6 +67,8 @@ package() {
+@@ -70,6 +71,8 @@ package() {
    make "${make_options[@]}"
-   install -vDm 644 $_name-$pkgver/{CHANGELOG,README} -t "$pkgdir/usr/share/doc/$pkgname/"
-   install -vDm 644 $_name-$pkgver/License -t "$pkgdir/usr/share/licenses/$pkgname/"
+   install -vDm 644 $_name/{CHANGELOG,README} -t "$pkgdir/usr/share/doc/$pkgname/"
+   install -vDm 644 $_name/License -t "$pkgdir/usr/share/licenses/$pkgname/"
 +  mv -v "$pkgdir/usr/include" "$pkgdir/usr/include32"
 +  sed -i 's|/usr/include|/usr/include32|g' "$pkgdir/usr/lib32/pkgconfig/"*.pc
    # remove files provided by libcap

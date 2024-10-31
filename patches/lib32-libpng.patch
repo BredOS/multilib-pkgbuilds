@@ -1,9 +1,9 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index 9670641..0be24ff 100644
+index 6063062..ccdbe34 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
-@@ -18,15 +18,16 @@ source=("https://downloads.sourceforge.net/sourceforge/${_pkgbasename}/${_pkgbas
- sha256sums=('6a5ca0652392a2d7c9db2ae5b40210843c0bbc081cbd410825ab00cc59f14a6c')
+@@ -26,15 +26,16 @@ prepare() {
+ }
  
  build() {
 -  export CC="gcc -m32"
@@ -13,7 +13,7 @@ index 9670641..0be24ff 100644
 +  export CXX="armv7h-linux-gnueabihf-g++"
 +  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
  
-   cd "${srcdir}/${_pkgbasename}-${pkgver}"
+   cd libpng
  
    ./configure \
      --prefix=/usr \
@@ -22,7 +22,7 @@ index 9670641..0be24ff 100644
      --program-suffix=-32 \
      --disable-static
    make
-@@ -37,7 +38,7 @@ package() {
+@@ -45,7 +46,7 @@ package() {
  
    make DESTDIR="${pkgdir}" install
  

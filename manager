@@ -108,6 +108,7 @@ def pull_pkg(
 # Function to build a package
 def build_pkg(package, generate_patch_flag=False):
     tempdir = tempfile.mkdtemp()
+    lp(f"Building {package} in {tempdir}")
     # makepkg_flags = "-srAfi --nocheck --noconfirm --skippgpcheck --skipchecksums"
     makepkg_flags = [
         "-srAfi",

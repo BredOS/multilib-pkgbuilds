@@ -1,8 +1,8 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index e0a6c47..b826ae9 100644
+index 15e7289..65d27bb 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
-@@ -53,7 +53,7 @@ prepare() {
+@@ -50,7 +50,7 @@ prepare() {
  
  build() {
    local meson_options=(
@@ -11,12 +11,12 @@ index e0a6c47..b826ae9 100644
      -D default_library=shared
    )
  
-@@ -72,8 +72,6 @@ package_lib32-freetype2() {
-   conflicts=()
+@@ -67,7 +67,7 @@ package_lib32-freetype2() {
  
    meson install -C build --destdir="$pkgdir"
--
--  rm -r "$pkgdir"/usr/include
- }
  
- # vim:set sw=2 sts=-1 et:
+-  rm -r "$pkgdir"/usr/{include,share}
++  rm -r "$pkgdir"/usr/share
+ 
+   install -Dm644 freetype-$pkgver/docs/FTL.TXT \
+     -t "$pkgdir/usr/share/licenses/$pkgname"
