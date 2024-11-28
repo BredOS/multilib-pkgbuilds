@@ -1,8 +1,8 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index ed619ac..4267b7e 100644
+index 58a15aa..46f0c40 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
-@@ -50,9 +50,11 @@ prepare() {
+@@ -50,8 +50,8 @@ prepare() {
  }
  
  build() {
@@ -11,12 +11,9 @@ index ed619ac..4267b7e 100644
 +  export CC="armv7h-linux-gnueabihf-gcc"
 +  export CXX="armv7h-linux-gnueabihf-g++"
    export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
-+  export CFLAGS="-Wno-redundant-decls"
-+  export CXXFLAGS="-Wno-redundant-decls"
  
    local _timeservers=({0..3}.arch.pool.ntp.org)
-   local _nameservers=(
-@@ -71,6 +73,7 @@ build() {
+@@ -71,6 +71,7 @@ build() {
    local _meson_options=(
      --libexecdir	/usr/lib32
      --libdir		/usr/lib32

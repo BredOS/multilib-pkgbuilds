@@ -1,5 +1,5 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index 747da43..abe8207 100644
+index d261428..7aa58e5 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
 @@ -61,12 +61,13 @@ prepare() {
@@ -18,7 +18,7 @@ index 747da43..abe8207 100644
      --disable-dependency-tracking
      --disable-ldap
      --disable-ldaps
-@@ -126,6 +127,7 @@ package_lib32-curl() {
+@@ -127,6 +128,7 @@ package_lib32-curl() {
    cd "${srcdir}"/build-curl
  
    make -C lib DESTDIR="${pkgdir}" install
