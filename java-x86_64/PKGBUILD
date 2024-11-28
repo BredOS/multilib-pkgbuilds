@@ -1,0 +1,15 @@
+pkgname=jdk-openjdk-x86_64
+pkgver=23.0.1
+pkgrel=1
+arch=('any')
+pkgdesc="OpenJDK 23.0.1 runtime and development environment for x86_64 (via Box64)"
+license=('GPL2')
+depends=('box64')
+options=('!strip')
+source=("https://download.java.net/java/GA/jdk${pkgver}/c28985cbf10d4e648e4004050f8781aa/11/GPL/openjdk-${pkgver}_linux-x64_bin.tar.gz")
+sha256sums=('dc9b6adc1550afd95e30e131c1c38044925cb656923f92f6dbf0fbd8c1405629')
+
+package() {
+    install -dm755 "$pkgdir/usr/lib/jvm/java-${pkgver}-x86_64"
+    cp -r "$srcdir/jdk-${pkgver}/"* "$pkgdir/usr/lib/jvm/java-${pkgver}-x86_64"
+}
