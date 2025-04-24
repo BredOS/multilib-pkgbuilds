@@ -1,8 +1,8 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index 9e16fc9..190f4bd 100644
+index 8c76f85..e10bd17 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
-@@ -46,20 +46,19 @@ prepare() {
+@@ -46,20 +46,20 @@ prepare() {
  
  build() {
    local configure_options=(
@@ -12,9 +12,8 @@ index 9e16fc9..190f4bd 100644
      --disable-static
      --libdir=/usr/lib32
      --libexecdir=/usr/lib32
--    --includedir=/usr/include/${_name}32
-+    --includedir=/usr/include32
      --prefix=/usr
++    --includedir=/usr/include32
      --program-suffix="-32"
      --sysconfdir=/etc
    )
@@ -22,21 +21,26 @@ index 9e16fc9..190f4bd 100644
 -  export CC="gcc -m32"
 -  export CXX="g++ -m32"
 -  export LDFLAGS+=" -m32"
+-  export PKG_CONFIG=i686-pc-linux-gnu-pkg-config
 +  export CC="armv7h-linux-gnueabihf-gcc"
 +  export CXX="armv7h-linux-gnueabihf-g++"
-   export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
    # fat-lto-objects is required for non-mangled .a files in libelf
    CFLAGS+=" -ffat-lto-objects"
-@@ -68,7 +67,7 @@ build() {
+   # debugging information is required for test-suite
+@@ -67,7 +67,10 @@ build() {
  
    cd $_name-$pkgver
    ./configure "${configure_options[@]}"
 -  make
++  # -I/usr/include to -I/usr/include32 and -I/usr/include3232 to -I/usr/include32 in Makefile
++  sed -i 's|/usr/include|/usr/include32|g' libelf/Makefile
++  sed -i 's|/usr/include3232|/usr/include32|g' libelf/Makefile
 +  make -j$(nproc)
  }
  
  check() {
-@@ -82,5 +81,5 @@ package() {
+@@ -81,5 +84,5 @@ package() {
    make DESTDIR="$pkgdir" install -C $_name-$pkgver/libelf
    make DESTDIR="$pkgdir" install -C $_name-$pkgver/config
    # remove anything that would conflict with elfutils and debuginfod

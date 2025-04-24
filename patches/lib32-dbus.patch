@@ -1,36 +1,22 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index e6d1875..2b737a3 100644
+index c23b960..1838689 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
-@@ -39,7 +39,8 @@ build() {
-     --sysconfdir=/etc
-     --localstatedir=/var
-     --libdir=/usr/lib32
--    --libexecdir=/usr/lib/dbus-1.0
-+    --includedir=/usr/include32
-+    --libexecdir=/usr/lib32/dbus-1.0
-     --runstatedir=/run
-     --with-console-auth-dir=/run/console/
-     --with-dbus-user=dbus
-@@ -57,9 +58,9 @@ build() {
-     --without-x
-   )
+@@ -40,7 +40,7 @@ prepare() {
  
--  export CC="gcc -m32 -mstackrealign"
--  export CXX="g++ -m32 -mstackrealign"
--  export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
-+  export CC="armv7h-linux-gnueabihf-gcc"
-+  export CXX="armv7h-linux-gnueabihf-g++"
-+  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ build() {
+   local meson_options=(
+-    --cross-file lib32
++    --cross-file arm-lib32
+     -D apparmor=disabled
+     -D dbus_user=dbus
+     -D doxygen_docs=disabled
+@@ -78,8 +78,6 @@ package_lib32-dbus() {
  
-   cd dbus-$pkgver
-   ./configure "${configure_options[@]}"
-@@ -85,7 +86,7 @@ package_lib32-dbus() {
-   DESTDIR="$pkgdir" make install
+   meson install -C build --destdir "$pkgdir"
  
-   rm -r "$pkgdir"/{etc,var}
--  rm -r "$pkgdir"/usr/{bin,include,lib,share}
-+  rm -r "$pkgdir"/usr/{bin,lib,share}
- 
-   install -Dt "$pkgdir/usr/share/licenses/$pkgname" -m644 COPYING
+-  rm -r "$pkgdir/usr/include"
+-
+   mkdir -p "$pkgdir/usr/share/licenses"
+   ln -s dbus "$pkgdir/usr/share/licenses/$pkgname"
  }

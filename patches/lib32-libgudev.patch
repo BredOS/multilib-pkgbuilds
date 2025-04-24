@@ -1,0 +1,32 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 35a968d..6941a32 100755
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -35,15 +35,16 @@ prepare() {
+ build() {
+   local meson_options=(
+     --libdir=/usr/lib32
++    --includedir=/usr/include32
+     -D gtk_doc=false
+     -D introspection=disabled
+     -D tests=disabled  # Need lib32-umockdev
+     -D vapi=disabled
+   )
+ 
+-  export CC='gcc -m32'
+-  export CXX='g++ -m32'
+-  export PKG_CONFIG=i686-pc-linux-gnu-pkg-config
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   arch-meson libgudev build "${meson_options[@]}"
+   meson compile -C build
+@@ -54,7 +55,6 @@ package() {
+   provides+=(libgudev-1.0.so)
+ 
+   meson install -C build --destdir "$pkgdir"
+-  rm -r "$pkgdir/usr/include"
+ }
+ 
+ # vim:set sw=2 sts=-1 et:

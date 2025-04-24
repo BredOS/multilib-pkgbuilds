@@ -1,0 +1,29 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index bd379b1..0da425a 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -21,9 +21,9 @@ sha256sums=('9a88fe1da3a29a917c3fc67ce6eb3178399d68e1a548c6d86c70d9b13651fd71'
+ validpgpkeys=('7082A0A50A2E92640F3880E0E4522DCC9B246FF7') # Zdenek Dohnal (The old 4D4227D7 key revoked) <zdohnal@redhat.com>
+ 
+ build() {
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
+-  export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   cd cups-${pkgver}
+ 
+@@ -40,8 +40,10 @@ build() {
+ 
+ package() {
+   cd cups-${pkgver}
++  make BUILDROOT="${pkgdir}" install
+   make BUILDROOT="${pkgdir}" install-libs
+-  rm -rf "$pkgdir/usr/lib"
++  rm -rf "$pkgdir/usr/lib" "$pkgdir/var/run" "$pkgdir/usr/sbin" "$pkgdir/usr/bin" "$pkgdir/usr/share" "$pkgdir/etc" "$pkgdir/var"
++  mv "$pkgdir/usr/include" "$pkgdir/usr/include32"
+ 
+ # add license + exception
+   install -m644 -Dt "${pkgdir}/usr/share/licenses/${pkgname}" {LICENSE,NOTICE}

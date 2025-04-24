@@ -1,0 +1,37 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index c61833b..88c6b7c 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -6,7 +6,7 @@ pkgname=lib32-$_pkgbasename
+ pkgver=0.24
+ pkgrel=1
+ pkgdesc="GNU internationalization library (32-bit)"
+-arch=('x86_64')
++arch=('aarch64')
+ url="https://www.gnu.org/software/gettext/"
+ license=('GPL')
+ depends=('lib32-acl' lib32-gcc-libs $_pkgbasename)
+@@ -21,12 +21,12 @@ validpgpkeys=('462225C3B46F34879FC8496CD605848ED7E69871'  # Daiki Ueno
+               'E0FFBD975397F77A32AB76ECB6301D9E1BBEAC08') # Bruno Haible (Open Source Development)
+ 
+ build() {
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
+-  export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   cd "${srcdir}/${_pkgbasename}-${pkgver}"
+-  ./configure --prefix=/usr --libdir=/usr/lib32 --libexecdir=/usr/lib32
++  ./configure --prefix=/usr --libdir=/usr/lib32 --includedir=/usr/include32 --libexecdir=/usr/lib32
+   make
+ }
+ 
+@@ -38,5 +38,5 @@ check() {
+ package() {
+   cd "${srcdir}/${_pkgbasename}-${pkgver}"
+   make DESTDIR="${pkgdir}" install
+-  rm -rf "${pkgdir}"/usr/{bin,include,share}
++  rm -rf "${pkgdir}"/usr/{bin,share}
+ }

@@ -1,5 +1,5 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index 730b9de..d81cbf8 100644
+index a5216e9..75c503b 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
 @@ -36,9 +36,9 @@ validpgpkeys=(
@@ -15,23 +15,33 @@ index 730b9de..d81cbf8 100644
    export PKG_CONFIG_PATH='/usr/lib32/pkgconfig'
  
    local cmake_options=(
-@@ -46,6 +46,7 @@ build() {
+@@ -46,19 +46,25 @@ build() {
      -D BUILD_SHARED_LIBS=ON
      -D CMAKE_BUILD_TYPE=None
      -D CMAKE_INSTALL_LIBDIR=lib32
 +    -D CMAKE_INSTALL_INCLUDEDIR=include32
      -D CMAKE_INSTALL_PREFIX=/usr
++    -D CMAKE_POLICY_VERSION_MINIMUM=3.5
      -D ENABLE_MPEG=OFF
      -S $_name-$pkgver
-@@ -55,6 +56,7 @@ build() {
+     -W no-dev
+   )
++
+   local cmake_test_options=(
      -B build-test
      -D CMAKE_BUILD_TYPE=None
      -D CMAKE_INSTALL_LIBDIR=lib32
 +    -D CMAKE_INSTALL_INCLUDEDIR=include32
      -D CMAKE_INSTALL_PREFIX=/usr
      -D ENABLE_MPEG=OFF
++    -D CMAKE_POLICY_VERSION_MINIMUM=3.5
      -S $_name-$pkgver
-@@ -82,5 +84,5 @@ package() {
+     -W no-dev
++    -D CMAKE_SYSTEM_INCLUDE_PATH=/usr/include32
+   )
+ 
+   cmake "${cmake_test_options[@]}"
+@@ -82,5 +88,5 @@ package() {
    install -vDm 644 $_name-$pkgver/{AUTHORS,ChangeLog,README} -t "$pkgdir/usr/share/doc/$pkgname"
  
    # remove everything that is provided by libsndfile

@@ -1,8 +1,8 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index abc66d0..918233f 100644
+index 4c4f780..8ad8a6c 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
-@@ -65,7 +65,9 @@ prepare() {
+@@ -67,7 +67,9 @@ prepare() {
  build() {
    cd llvm-$pkgver.src/build
  
@@ -13,7 +13,7 @@ index abc66d0..918233f 100644
  
    # Build only minimal debug info to reduce size
    CFLAGS+=' -g1'
-@@ -74,24 +76,25 @@ build() {
+@@ -76,24 +78,25 @@ build() {
    local cmake_args=(
      -G Ninja
      -DCMAKE_BUILD_TYPE=Release
@@ -47,17 +47,18 @@ index abc66d0..918233f 100644
      -DLLVM_USE_PERF=ON
    )
  
-@@ -111,7 +114,8 @@ package_lib32-llvm() {
+@@ -113,7 +116,9 @@ package_lib32-llvm() {
    cd llvm-$pkgver.src/build
  
    DESTDIR="$pkgdir" ninja install-distribution
 -
++  install -d "$pkgdir/usr/lib32"
 +  cp -r "$pkgdir"/usr/armv7h-linux-gnueabihf/lib/* "$pkgdir"/usr/lib32/
 +  rm -rf "$pkgdir"/usr/armv7h-linux-gnueabihf/lib/
    # The runtime library goes into lib32-llvm-libs
    mv "$pkgdir"/usr/lib32/lib{LLVM,LTO,Remarks}*.so* "$srcdir"
    mv -f "$pkgdir"/usr/lib32/LLVMgold.so "$srcdir"
-@@ -119,12 +123,12 @@ package_lib32-llvm() {
+@@ -121,12 +126,12 @@ package_lib32-llvm() {
    # Fix permissions of static libs
    chmod -x "$pkgdir"/usr/lib32/*.a
  

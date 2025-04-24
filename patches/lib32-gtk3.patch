@@ -1,0 +1,35 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 2e901b9..ecd70f9 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -68,7 +68,9 @@ prepare() {
+ 
+ build() {
+   local meson_options=(
+-    --cross-file lib32
++    --libdir /usr/lib32
++    --includedir /usr/include32
++    --libexecdir lib32
+     -D broadway_backend=true
+     -D cloudproviders=false
+     -D colord=yes
+@@ -79,6 +81,10 @@ build() {
+     -D tracker3=false
+   )
+ 
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
++
+   CFLAGS+=" -DG_DISABLE_CAST_CHECKS"
+   arch-meson gtk build "${meson_options[@]}"
+   meson compile -C build
+@@ -96,7 +102,7 @@ package() {
+   install=lib32-gtk3.install
+ 
+   meson install -C build --destdir "$pkgdir"
+-  rm -r "$pkgdir"/{etc,usr/{include,share}}
++  rm -r "$pkgdir"/{etc,usr/share}
+   find "$pkgdir/usr/bin" -type f -not -name gtk-query-immodules-3.0 -delete
+   mv "$pkgdir"/usr/bin/gtk-query-immodules-3.0{,-32}
+ 

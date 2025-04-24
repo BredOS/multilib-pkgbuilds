@@ -1,0 +1,35 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 7f0a91b..19659d5 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -33,14 +33,19 @@ prepare() {
+ 
+ build() {
+   local meson_options=(
+-    --cross-file lib32
++    --libdir /usr/lib32
++    --includedir /usr/include32
+     -D documentation=disabled
+     -D gtk_doc=disabled
+     -D installed_tests=false
+     -D introspection=disabled
+   )
+ 
+-  arch-meson json-glib build "${meson_options[@]}"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
++  
++arch-meson json-glib build "${meson_options[@]}"
+   meson compile -C build
+ }
+ 
+@@ -54,7 +59,7 @@ package_lib32-json-glib() {
+ 
+   meson install -C build --destdir "$pkgdir"
+ 
+-  rm -r "$pkgdir"/usr/{bin,include,share}
++  rm -r "$pkgdir"/usr/{bin,share}
+ }
+ 
+ # vim:set sw=2 sts=-1 et:

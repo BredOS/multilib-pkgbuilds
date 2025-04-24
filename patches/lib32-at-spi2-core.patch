@@ -1,0 +1,33 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index b43a49f..f31c3d6 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -46,12 +46,17 @@ prepare() {
+ 
+ build() {
+   local meson_options=(
+-    --cross-file lib32
++    --libdir=/usr/lib32
++    --includedir=/usr/include32
+     -D default_bus=dbus-broker
+     -D docs=false
+     -D introspection=disabled
+   )
+ 
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
++
+   arch-meson at-spi2-core build "${meson_options[@]}"
+   meson compile -C build
+ }
+@@ -79,7 +84,8 @@ package_lib32-at-spi2-core() {
+ 
+   meson install -C build --destdir "$pkgdir"
+ 
+-  rm -r "${pkgdir}"/{etc,usr/{include,lib,share}}
++  mv "${pkgdir}"/usr/lib "${pkgdir}"/usr/lib32
++  rm -r "${pkgdir}"/{etc,usr/share}
+ }
+ 
+ # vim:set sw=2 sts=-1 et:

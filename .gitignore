@@ -11,4 +11,6 @@ __pycache__
 built/
 .vscode/
 manager.log
-
+lib32-*/
+arm32-*/
+pkgconf/pkgconf

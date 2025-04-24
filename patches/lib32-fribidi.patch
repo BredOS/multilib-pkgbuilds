@@ -1,0 +1,31 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 04863ae..a862a18 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -32,10 +32,14 @@ prepare() {
+ 
+ build() {
+   local meson_options=(
+-    --cross-file lib32
++    --includedir /usr/include32
+     -D docs=false
+   )
+ 
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
++
+   arch-meson fribidi build "${meson_options[@]}"
+   meson compile -C build
+ }
+@@ -46,7 +50,9 @@ check() {
+ 
+ package() {
+   meson install -C build --destdir "$pkgdir"
+-  rm -r "$pkgdir"/usr/{bin,include}
++  mv "$pkgdir"/usr/lib "$pkgdir"/usr/lib32
++  sed -i '/^libdir=/c\libdir=/usr/lib32' "$pkgdir"/usr/lib32/pkgconfig/fribidi.pc
++  rm -r "$pkgdir"/usr/bin
+ }
+ 
+ # vim:set sw=2 sts=-1 et:

@@ -1,0 +1,31 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 43abd76..a1f42d0 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -17,13 +17,13 @@ validpgpkeys=('19882D92DDA4C400C22C0D56CC2AF4472167BE03') # Thomas E. Dickey (us
+ validpgpkeys+=('3BB639E56F861FA2E86505690FDD682D974CA72A') # Matt Turner <mattst88@gmail.com>
+ 
+ build() {
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
+-  export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   cd libXft-${pkgver}
+   ./configure --prefix=/usr \
+-    --libdir=/usr/lib32 --disable-static
++    --libexecdir=/usr/lib32 --libdir=/usr/lib32 --includedir=/usr/include32 --disable-static
+   make
+ }
+ 
+@@ -31,7 +31,7 @@ package() {
+   cd libXft-${pkgver}
+   make DESTDIR="${pkgdir}" install
+ 
+-  rm -rf "${pkgdir}"/usr/{bin,include,share}
++  rm -rf "${pkgdir}"/usr/{bin,share}
+   mkdir -p "$pkgdir/usr/share/licenses"
+   ln -s $_pkgbasename "$pkgdir/usr/share/licenses/$pkgname"
+ }

@@ -1,0 +1,33 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index d846c41..964cf6f 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -16,14 +16,15 @@ source=("https://github.com/mm2/Little-CMS/releases/download/lcms${pkgver}/lcms2
+ sha512sums=('638dd6ad6787456c8145510d18b2d0727bd0a446a13ac2934aabc9531d1156eca2a2c0fd780a453823fbd35a1895f9d8de5dc4b3cab505459dd3f0535b4e837d')
+ 
+ build() {
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
+-  export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   cd lcms2-${pkgver}
+ 
+   ./configure --prefix=/usr \
+-    --libdir=/usr/lib32
++    --libdir=/usr/lib32 \
++    --includedir /usr/include32
+   make
+ }
+ 
+@@ -38,7 +39,7 @@ package() {
+ 
+   make DESTDIR="${pkgdir}" install
+ 
+-  rm -rf "${pkgdir}"/usr/{include,share,bin}
++  rm -rf "${pkgdir}"/usr/{share,bin}
+   mkdir -p "${pkgdir}/usr/share/licenses"
+   ln -s lcms2 "${pkgdir}/usr/share/licenses/${pkgname}"
+ }

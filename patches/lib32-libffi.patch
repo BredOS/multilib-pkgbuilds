@@ -1,8 +1,8 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index a5de2c2..1054f6b 100644
+index 2bc9ba9..634f026 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
-@@ -18,16 +18,18 @@ b2sums=('af8402a09bdbd59b4e9400d2d71bd5ce98f6f1d981d35d1ab40d77a831b13b32c5bd34c
+@@ -17,18 +17,18 @@ b2sums=('0dd17b4fd358beb9842889168437443137445a5dba1f0a7e8669ae420d8efb927815c08
  
  build() {
    local prepare_options=(
@@ -17,13 +17,15 @@ index a5de2c2..1054f6b 100644
      --prefix=/usr
    )
  
--  export CC="gcc -m32"
+-  export CFLAGS+=" -m32"
+-  export CXXFLAGS+=" -m32"
+-  export LDFLAGS+=" -m32"
 +  export CC="armv7h-linux-gnueabihf-gcc"
 +  export CXX="armv7h-linux-gnueabihf-g++"
+   export PKG_CONFIG_PATH='/usr/lib32/pkgconfig'
  
    cd $_name-$pkgver
-   ./configure "${prepare_options[@]}"
-@@ -46,7 +48,7 @@ check() {
+@@ -39,7 +39,7 @@ build() {
  package() {
    cd $_name-$pkgver
    make DESTDIR="$pkgdir" install

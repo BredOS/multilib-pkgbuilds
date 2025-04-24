@@ -1,0 +1,35 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index c9ba4ae..8e358a5 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -44,13 +44,18 @@ prepare() {
+ 
+ build() {
+   local meson_options=(
+-    --cross-file lib32
++    --libdir /usr/lib32
++    --includedir /usr/include32
+     -D gettext=true
+     -D introspection=false
+     -D libs-only=true
+     -D tests=true
+   )
+ 
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
++
+   arch-meson polkit build "${meson_options[@]}"
+   meson compile -C build
+ }
+@@ -61,8 +66,8 @@ check() {
+ 
+ package() {
+   meson install -C build --destdir "$pkgdir"
+-
+-  rm -r "$pkgdir"/usr/{include,lib,share}
++  mv "$pkgdir"/usr/lib "$pkgdir"/usr/lib32
++  rm -r "$pkgdir"/usr/share
+ }
+ 
+ # vim:set sw=2 sts=-1 et:

@@ -1,0 +1,526 @@
+diff --git a/arm32-binutils/PKGBUILD b/arm32-binutils/PKGBUILD
+index 409626e..d9dfbf5 100644
+--- a/arm32-binutils/PKGBUILD
++++ b/arm32-binutils/PKGBUILD
+@@ -4,9 +4,9 @@
+ _arch=armv7h
+ _target=$_arch-linux-gnueabihf
+ pkgname=arm32-binutils
+-pkgver=2.42
++pkgver=2.44
+ pkgrel=1
+-_commit=c7f28aad0c99d1d2fec4e52ebfa3735d90ceb8e9
++_commit=815d9a14cbbb3b81843f7566222c87fb22e7255d
+ pkgdesc='A set of programs to assemble and manipulate binary and object files for armv7h'
+ arch=('aarch64')
+ url='https://www.gnu.org/software/binutils/'
+diff --git a/arm32-gcc/PKGBUILD b/arm32-gcc/PKGBUILD
+index 6faeb00..8f5a364 100644
+--- a/arm32-gcc/PKGBUILD
++++ b/arm32-gcc/PKGBUILD
+@@ -3,8 +3,9 @@
+ 
+ _target=armv7h-linux-gnueabihf
+ pkgname=arm32-gcc
+-pkgver=14.1.0
+-pkgrel=3
++pkgver=14.2.1+r753+g1cd744a6828f
++_commit=1cd744a6828f6ab9179906d16434ea40b6404737
++pkgrel=1
+ pkgdesc='The GNU Compiler Collection - cross compiler for armv7h'
+ arch=(aarch64)
+ url='https://gcc.gnu.org/'
+@@ -15,7 +16,6 @@ provides=(gcc-multilib arm32-gcc lib32-gcc-libs arm32-gcc-fortran arm32-gcc-objc
+ conflicts=(arm32-gcc)
+ options=(!emptydirs !strip staticlibs)
+ # https://gcc.gnu.org/git/gitweb.cgi?p=gcc.git
+-_commit=cd0059a1976303638cea95f216de129334fc04d1
+ source=(git+https://sourceware.org/git/gcc.git#commit=${_commit}
+         c89
+         c99)
+diff --git a/arm32-linux-api-headers/PKGBUILD b/arm32-linux-api-headers/PKGBUILD
+index 4e0444d..15af3f6 100644
+--- a/arm32-linux-api-headers/PKGBUILD
++++ b/arm32-linux-api-headers/PKGBUILD
+@@ -3,7 +3,7 @@
+ 
+ _kernel_arch=arm
+ pkgname=arm32-linux-api-headers
+-pkgver=6.9
++pkgver=6.14
+ pkgrel=1
+ pkgdesc="Kernel headers sanitized for use in armv7h userspace"
+ arch=(any)
+diff --git a/conf.py b/conf.py
+index 6921e8a..42b1529 100644
+--- a/conf.py
++++ b/conf.py
+@@ -7,8 +7,28 @@ repos = [
+     "https://geo.mirror.pkgbuild.com/multilib/os/x86_64/multilib.db.tar.gz",
+     "http://dk.mirror.archlinuxarm.org/armv7h/extra/extra.db.tar.gz",
+ ]
++# lib32-vulkan-broadcom
++# lib32-vulkan-freedreno
++# lib32-vulkan-headers
++# lib32-vulkan-icd-loader
++# lib32-vulkan-mesa-layers
++# lib32-vulkan-panfrost
++# lib32-vulkan-radeon
++# lib32-vulkan-swrast
++# lib32-vulkan-virtio
+ 
+ ignore = [
++    "lib32-clang",
++    "lib32-libelf",
++    "lib32-libpulse",
++    "lib32-libpng",
++    "lib32-llvm",
++    "lib32-llvm-libs",
++    "lib32-systemd",
++    "lib32-vulkan-icd-loader",
++    "lib32-vulkan-mesa-layers",
++    "lib32-vulkan-radeon",
++    "lib32-vulkan-swrast",
+     "lib32-libxcrypt-compat",
+     "lib32-libcurl-compat",
+     "lib32-libcurl-gnutls",
+@@ -26,6 +46,18 @@ ignore = [
+     "lib32-spirv-llvm-translator",
+     "lib32-harfbuzz-cairo",
+     "lib32-harfbuzz-icu",
++    "lib32-vulkan-headers",
++    "lib32-vulkan-icd-loader",
++    "lib32-vulkan-intel",
++    "lib32-vulkan-radeon",
++    "lib32-vulkan-swrast",
++    "lib32-vulkan-tools",
++    "lib32-vulkan-validation-layers",
++    "lib32-vulkan-virtio",
++    "lib32-libmysofa",
++    "lib32-directx-headers",
++    "steam"
++
+ ]
+ 
+ alias = {
+@@ -41,6 +73,7 @@ alias = {
+ }
+ 
+ localpkgs = [
++    "lib32-fuse3",
+     "lib32-glibc",
+     "lib32-xtrans",
+     "lib32-xorgproto",
+diff --git a/lib32-glibc/PKGBUILD b/lib32-glibc/PKGBUILD
+index 9e70607..c27ae23 100644
+--- a/lib32-glibc/PKGBUILD
++++ b/lib32-glibc/PKGBUILD
+@@ -3,9 +3,9 @@
+ 
+ _target=armv7h-linux-gnueabihf
+ pkgname=lib32-glibc
+-pkgver=2.39
++pkgver=2.41+r47+g046b33800c3e
++_commit=046b33800c3e8c7ac21b48e3ce5dbed8901f7e37
+ pkgrel=1
+-_commit=ef321e23c20eebc6d6fb4044425c00e6df27b05f
+ pkgdesc="GNU C Library for armv7h"
+ arch=(any)
+ url='https://www.gnu.org/software/libc/'
+diff --git a/patches/lib32-dbus.patch b/patches/lib32-dbus.patch
+index 194c1c4..d8459e4 100644
+--- a/patches/lib32-dbus.patch
++++ b/patches/lib32-dbus.patch
+@@ -1,36 +1,22 @@
+ diff --git a/PKGBUILD b/PKGBUILD
+-index e6d1875..2b737a3 100644
++index c23b960..1838689 100644
+ --- a/PKGBUILD
+ +++ b/PKGBUILD
+-@@ -39,7 +39,8 @@ build() {
+-     --sysconfdir=/etc
+-     --localstatedir=/var
+-     --libdir=/usr/lib32
+--    --libexecdir=/usr/lib/dbus-1.0
+-+    --includedir=/usr/include32
+-+    --libexecdir=/usr/lib32/dbus-1.0
+-     --runstatedir=/run
+-     --with-console-auth-dir=/run/console/
+-     --with-dbus-user=dbus
+-@@ -57,9 +58,9 @@ build() {
+-     --without-x
+-   )
++@@ -40,7 +40,7 @@ prepare() {
+  
+--  export CC="gcc -m32 -mstackrealign"
+--  export CXX="g++ -m32 -mstackrealign"
+--  export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
+-+  export CC="armv7h-linux-gnueabihf-gcc"
+-+  export CXX="armv7h-linux-gnueabihf-g++"
+-+  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
++ build() {
++   local meson_options=(
++-    --cross-file lib32
+++    --cross-file arm-lib32
++     -D apparmor=disabled
++     -D dbus_user=dbus
++     -D doxygen_docs=disabled
++@@ -78,8 +78,6 @@ package_lib32-dbus() {
+  
+-   cd dbus-$pkgver
+-   ./configure "${configure_options[@]}"
+-@@ -85,7 +86,7 @@ package_lib32-dbus() {
+-   DESTDIR="$pkgdir" make install
++   meson install -C build --destdir "$pkgdir"
+  
+-   rm -r "$pkgdir"/{etc,var}
+--  rm -r "$pkgdir"/usr/{bin,include,lib,share}
+-+  rm -r "$pkgdir"/usr/{bin,lib,share}
+- 
+-   install -Dt "$pkgdir/usr/share/licenses/$pkgname" -m644 COPYING
++-  rm -r "$pkgdir/usr/include"
++-
++   mkdir -p "$pkgdir/usr/share/licenses"
++   ln -s dbus "$pkgdir/usr/share/licenses/$pkgname"
+  }
+diff --git a/patches/lib32-flac.patch b/patches/lib32-flac.patch
+index de7ab54..6a65a9a 100644
+--- a/patches/lib32-flac.patch
++++ b/patches/lib32-flac.patch
+@@ -1,11 +1,19 @@
+ diff --git a/PKGBUILD b/PKGBUILD
+-index 8936cb4..3e0a6c4 100644
++index cdbdcc6..b91dfd5 100644
+ --- a/PKGBUILD
+ +++ b/PKGBUILD
+-@@ -26,14 +26,15 @@ prepare() {
+- }
++@@ -44,6 +44,7 @@ build() {
++     -D BUILD_PROGRAMS=OFF
++     -D BUILD_SHARED_LIBS=ON
++     -D CMAKE_BUILD_TYPE=None
+++    -D CMAKE_INSTALL_INCLUDEDIR=/usr/include32
++     -D CMAKE_INSTALL_LIBDIR=/usr/lib32
++     -D CMAKE_INSTALL_PREFIX=/usr
++     -D INSTALL_MANPAGES=OFF
++@@ -54,9 +55,9 @@ build() {
++     -D WITH_STACK_PROTECTOR=OFF
++   )
+  
+- build() {
+ -  export CC="gcc -m32"
+ -  export CXX="g++ -m32"
+ -  export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
+@@ -13,20 +21,14 @@ index 8936cb4..3e0a6c4 100644
+ +  export CXX="armv7h-linux-gnueabihf-g++"
+ +  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+  
+-   cmake -S flac-${pkgver} -B build -G Ninja \
+-     -DCMAKE_BUILD_TYPE=None \
+-     -DCMAKE_INSTALL_PREFIX=/usr \
+-     -DCMAKE_INSTALL_LIBDIR=/usr/lib32 \
+-+    -DCMAKE_INSTALL_INCLUDEDIR=/usr/include32 \
+-     -DBUILD_SHARED_LIBS=ON \
+-     -DINSTALL_MANPAGES=OFF \
+-     -DWITH_STACK_PROTECTOR=OFF \
+-@@ -51,7 +52,7 @@ package_lib32-flac() {
++   cmake -S flac -B build -G Ninja "${cmake_options[@]}"
++   cmake --build build
++@@ -74,7 +75,7 @@ package_lib32-flac() {
+  
+    DESTDIR="${pkgdir}" cmake --install build
+  
+--  rm -r "${pkgdir}"/usr/{bin,include}
+-+  rm -rf "${pkgdir}"/usr/{bin,share}
++-  rm -r "${pkgdir}/usr/include"
+++  rm -r "${pkgdir}/usr/include32"
+  
+-   install -Dm 644 flac-${pkgver}/COPYING.Xiph -t "${pkgdir}/usr/share/licenses/${pkgname}"
++   install -Dm 644 flac/COPYING.Xiph -t "${pkgdir}/usr/share/licenses/${pkgname}"
+  }
+diff --git a/patches/lib32-libelf.patch b/patches/lib32-libelf.patch
+index ad02eed..3a1844f 100644
+--- a/patches/lib32-libelf.patch
++++ b/patches/lib32-libelf.patch
+@@ -1,8 +1,8 @@
+ diff --git a/PKGBUILD b/PKGBUILD
+-index 9e16fc9..190f4bd 100644
++index 8c76f85..e10bd17 100644
+ --- a/PKGBUILD
+ +++ b/PKGBUILD
+-@@ -46,20 +46,19 @@ prepare() {
++@@ -46,20 +46,20 @@ prepare() {
+  
+  build() {
+    local configure_options=(
+@@ -12,9 +12,8 @@ index 9e16fc9..190f4bd 100644
+      --disable-static
+      --libdir=/usr/lib32
+      --libexecdir=/usr/lib32
+--    --includedir=/usr/include/${_name}32
+-+    --includedir=/usr/include32
+      --prefix=/usr
+++    --includedir=/usr/include32
+      --program-suffix="-32"
+      --sysconfdir=/etc
+    )
+@@ -22,21 +21,26 @@ index 9e16fc9..190f4bd 100644
+ -  export CC="gcc -m32"
+ -  export CXX="g++ -m32"
+ -  export LDFLAGS+=" -m32"
++-  export PKG_CONFIG=i686-pc-linux-gnu-pkg-config
+ +  export CC="armv7h-linux-gnueabihf-gcc"
+ +  export CXX="armv7h-linux-gnueabihf-g++"
+-   export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+    # fat-lto-objects is required for non-mangled .a files in libelf
+    CFLAGS+=" -ffat-lto-objects"
+-@@ -68,7 +67,7 @@ build() {
++   # debugging information is required for test-suite
++@@ -67,7 +67,10 @@ build() {
+  
+    cd $_name-$pkgver
+    ./configure "${configure_options[@]}"
+ -  make
+++  # -I/usr/include to -I/usr/include32 and -I/usr/include3232 to -I/usr/include32 in Makefile
+++  sed -i 's|/usr/include|/usr/include32|g' libelf/Makefile
+++  sed -i 's|/usr/include3232|/usr/include32|g' libelf/Makefile
+ +  make -j$(nproc)
+  }
+  
+  check() {
+-@@ -82,5 +81,5 @@ package() {
++@@ -81,5 +84,5 @@ package() {
+    make DESTDIR="$pkgdir" install -C $_name-$pkgver/libelf
+    make DESTDIR="$pkgdir" install -C $_name-$pkgver/config
+    # remove anything that would conflict with elfutils and debuginfod
+diff --git a/patches/lib32-libffi.patch b/patches/lib32-libffi.patch
+index 2ffb3bf..8517f75 100644
+--- a/patches/lib32-libffi.patch
++++ b/patches/lib32-libffi.patch
+@@ -1,8 +1,8 @@
+ diff --git a/PKGBUILD b/PKGBUILD
+-index a5de2c2..1054f6b 100644
++index 2bc9ba9..634f026 100644
+ --- a/PKGBUILD
+ +++ b/PKGBUILD
+-@@ -18,16 +18,18 @@ b2sums=('af8402a09bdbd59b4e9400d2d71bd5ce98f6f1d981d35d1ab40d77a831b13b32c5bd34c
++@@ -17,18 +17,18 @@ b2sums=('0dd17b4fd358beb9842889168437443137445a5dba1f0a7e8669ae420d8efb927815c08
+  
+  build() {
+    local prepare_options=(
+@@ -17,13 +17,15 @@ index a5de2c2..1054f6b 100644
+      --prefix=/usr
+    )
+  
+--  export CC="gcc -m32"
++-  export CFLAGS+=" -m32"
++-  export CXXFLAGS+=" -m32"
++-  export LDFLAGS+=" -m32"
+ +  export CC="armv7h-linux-gnueabihf-gcc"
+ +  export CXX="armv7h-linux-gnueabihf-g++"
++   export PKG_CONFIG_PATH='/usr/lib32/pkgconfig'
+  
+    cd $_name-$pkgver
+-   ./configure "${prepare_options[@]}"
+-@@ -46,7 +48,7 @@ check() {
++@@ -39,7 +39,7 @@ build() {
+  package() {
+    cd $_name-$pkgver
+    make DESTDIR="$pkgdir" install
+diff --git a/patches/lib32-libpulse.patch b/patches/lib32-libpulse.patch
+index c6c8202..ea5f99e 100644
+--- a/patches/lib32-libpulse.patch
++++ b/patches/lib32-libpulse.patch
+@@ -1,44 +1,38 @@
+ diff --git a/PKGBUILD b/PKGBUILD
+-index d9f6cd9..51eb1d7 100644
++index b6c879a..e804090 100644
+ --- a/PKGBUILD
+ +++ b/PKGBUILD
+-@@ -21,7 +21,7 @@ depends=(
+- makedepends=(
++@@ -25,6 +25,7 @@ makedepends=(
+    git
+-   lib32-glib2
+--  lib32-gtk3
+-+  lib32-valgrind
+-   lib32-speexdsp
++   lib32-libx11
+    meson
+++  lib32-valgrind
+    valgrind
+-@@ -52,6 +52,7 @@ prepare() {
++ )
++ optdepends=('lib32-alsa-plugins: ALSA support')
++@@ -49,7 +50,8 @@ prepare() {
++ 
+  build() {
+    local meson_options=(
+-     --libdir /usr/lib32
++-    --cross-file lib32
+++    --libdir /usr/lib32
+ +    --includedir /usr/include32
+      -D avahi=disabled
+      -D bashcompletiondir=no
+      -D bluez5-gstreamer=disabled
+-@@ -74,13 +75,15 @@ build() {
+-     -D udevrulesdir=/usr/lib/udev/rules.d
+-     -D webrtc-aec=disabled
++@@ -76,7 +78,11 @@ build() {
+      -D zshcompletiondir=no
+-+    -D gtk=disabled
+    )
+  
+--  export CC="gcc -m32"
+--  export CXX="g++ -m32"
+--  export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
+ +  export CC="armv7h-linux-gnueabihf-gcc"
+ +  export CXX="armv7h-linux-gnueabihf-g++"
+ +  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+- 
+    arch-meson pulseaudio build "${meson_options[@]}"
+ +  sed -i 's|-I/usr/include |-I/usr/include32 |' $srcdir/build/{compile_commands.json,build.ninja}
+    meson compile -C build
+  }
+  
+-@@ -90,7 +93,7 @@ check() {
++@@ -86,7 +92,7 @@ check() {
+  
+  package_lib32-libpulse() {
+    meson install -C build --destdir "$pkgdir"
+diff --git a/patches/lib32-libsndfile.patch b/patches/lib32-libsndfile.patch
+index 6a6292d..c61a253 100644
+--- a/patches/lib32-libsndfile.patch
++++ b/patches/lib32-libsndfile.patch
+@@ -1,5 +1,5 @@
+ diff --git a/PKGBUILD b/PKGBUILD
+-index 730b9de..d81cbf8 100644
++index a5216e9..b7e960b 100644
+ --- a/PKGBUILD
+ +++ b/PKGBUILD
+ @@ -36,9 +36,9 @@ validpgpkeys=(
+@@ -15,23 +15,33 @@ index 730b9de..d81cbf8 100644
+    export PKG_CONFIG_PATH='/usr/lib32/pkgconfig'
+  
+    local cmake_options=(
+-@@ -46,6 +46,7 @@ build() {
++@@ -46,19 +46,25 @@ build() {
+      -D BUILD_SHARED_LIBS=ON
+      -D CMAKE_BUILD_TYPE=None
+      -D CMAKE_INSTALL_LIBDIR=lib32
+ +    -D CMAKE_INSTALL_INCLUDEDIR=include32
+      -D CMAKE_INSTALL_PREFIX=/usr
+++    -D CMAKE_POLICY_VERSION_MINIMUM=3.5
+      -D ENABLE_MPEG=OFF
+      -S $_name-$pkgver
+-@@ -55,6 +56,7 @@ build() {
++     -W no-dev
++   )
+++
++   local cmake_test_options=(
+      -B build-test
+      -D CMAKE_BUILD_TYPE=None
+      -D CMAKE_INSTALL_LIBDIR=lib32
+ +    -D CMAKE_INSTALL_INCLUDEDIR=include32
+      -D CMAKE_INSTALL_PREFIX=/usr
+      -D ENABLE_MPEG=OFF
+++    -D CMAKE_POLICY_VERSION_MINIMUM=3.5
+      -S $_name-$pkgver
+-@@ -82,5 +84,5 @@ package() {
++     -W no-dev
+++    -D CMAKE_C_FLAGS="-I/usr/include32 -march=armv7-a -mfloat-abi=hard -mfpu=neon"
++   )
++ 
++   cmake "${cmake_test_options[@]}"
++@@ -82,5 +88,5 @@ package() {
+    install -vDm 644 $_name-$pkgver/{AUTHORS,ChangeLog,README} -t "$pkgdir/usr/share/doc/$pkgname"
+  
+    # remove everything that is provided by libsndfile
+diff --git a/patches/lib32-pcre2.patch b/patches/lib32-pcre2.patch
+index 55ea4ac..058eac9 100644
+--- a/patches/lib32-pcre2.patch
++++ b/patches/lib32-pcre2.patch
+@@ -1,32 +1,33 @@
+ diff --git a/PKGBUILD b/PKGBUILD
+-index 641796f..faff4c8 100644
++index ad8bf44..7aa4fe4 100644
+ --- a/PKGBUILD
+ +++ b/PKGBUILD
+-@@ -36,14 +36,15 @@ build() {
+-     --enable-pcre2-16
+-     --enable-pcre2-32
++@@ -59,15 +59,15 @@ build() {
++     --enable-pcre2grep-libz
++     --enable-pcre2test-libreadline
+      --libdir=/usr/lib32
+ +    --includedir=/usr/include32
+      --prefix=/usr
+    )
+  
+-   cd $_name-$pkgver
++   cd $_name
+  
+--  export CC="gcc -m32"
+--  export CXX="g++ -m32"
+--  export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
++-  export CFLAGS+=" -m32"
++-  export CXXFLAGS+=" -m32"
++-  export LDFLAGS+=" -m32"
++-  export PKG_CONFIG_PATH='/usr/lib32/pkgconfig'
+ +  export CC="armv7h-linux-gnueabihf-gcc"
+ +  export CXX="armv7h-linux-gnueabihf-g++"
+ +  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+  
+    ./configure "${configure_options[@]}"
+    make
+-@@ -56,7 +57,7 @@ check() {
++@@ -80,7 +80,7 @@ check() {
+  package() {
+-   make DESTDIR="$pkgdir" install -C $_name-$pkgver
++   make DESTDIR="$pkgdir" install -C $_name
+  
+ -  rm -rv "$pkgdir"/usr/{bin,share,include}
+ +  rm -rv "$pkgdir"/usr/{bin,share}
+  
+-   install -vDm644 $_name-$pkgver/LICENCE -t "$pkgdir/usr/share/licenses/$pkgname/"
++   install -Dm644 ./*.txt -t "$pkgdir/usr/share/licenses/$pkgname/"
+  }
+diff --git a/pkgconf/PKGBUILD b/pkgconf/PKGBUILD
+index 972ba2c..a55f83f 100644
+--- a/pkgconf/PKGBUILD
++++ b/pkgconf/PKGBUILD
+@@ -5,7 +5,8 @@
+ # Contributor: Bartlomiej Piotrowski <nospam@bpiotrowski.pl>
+ 
+ pkgname=pkgconf
+-pkgver=2.1.1
++_pkgver=2.3.0
++pkgver=2.3.0.bredos
+ pkgrel=1
+ pkgdesc="Package compiler and linker metadata toolkit"
+ url="https://gitea.treehouse.systems/ariadne/pkgconf"
+@@ -26,21 +27,15 @@ provides=(
+ )
+ conflicts=(pkg-config)
+ replaces=(pkg-config)
+-_commit=b6e04e2d47b4ca093632b9efde6303a137ea0634  # tags/pkgconf-2.1.1
+ source=(
+-  "git+$url#commit=$_commit"
++  "git+$url#tag=pkgconf-$_pkgver"
+   "armv7h-linux-gnueabihf.personality"
+   "aarch64-unknown-linux-gnu.personality"
+ )
+-b2sums=('fa2c1626e15d28759cc3191bd690fe7ee96463fd87bb85218f17de7b6cd81540d59de3ce403403284103f3a0543fbe8c49c56793f11de2e4ccc72060c08c7772'
++b2sums=('d117cb9c246a870faf4702db2ef0df6558e411c9605a7f63b560bd11af4fc05b4f88b942c37e7aeac792abebb0db35f4200b6f98df39cda5b49952821e27315b'
+         '67d10c68405b27fc52c8986d4fd63861992b85c1c4a157422304db1010f2ae3984099986b64a73c8dfae925ae8cca6b7466c50efb7ceb9b3daab39b498d2e71d'
+         '7557b2ac336d02c0b445e0af0935a7b95307d8c900906c76e94542cbd9e5ae6c362c1d7c4024afbbe649e7d08b361cc82ff2697138bb362b069ead20d3bea64e')
+ 
+-pkgver() {
+-  cd pkgconf
+-  git describe --tags | sed 's/^pkgconf-//;s/[^-]*-g/r&/;s/-/+/g'
+-}
+-
+ prepare() {
+   cd pkgconf
+ }

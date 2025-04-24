@@ -1,0 +1,32 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 77d0d7b..6e77ad7 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -43,10 +43,16 @@ prepare() {
+ 
+ build() {
+   local meson_options=(
+-    --cross-file lib32
++    --libdir /usr/lib32
++    --includedir /usr/include32
+     -D introspection=disabled
+   )
+-
++  
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
++  export LDFLAGS="-L/usr/lib32 ${LDFLAGS}"
++  
+   arch-meson pango build "${meson_options[@]}"
+   meson compile -C build
+ }
+@@ -59,7 +65,7 @@ package_lib32-pango() {
+ 
+   meson install -C build --destdir "$pkgdir"
+ 
+-  rm -r "$pkgdir"/usr/{bin,include}
++  rm -r "$pkgdir"/usr/bin
+ }
+ 
+ # vim:set sw=2 sts=-1 et:

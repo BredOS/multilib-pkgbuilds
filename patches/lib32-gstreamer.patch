@@ -1,0 +1,32 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 8d7cfce..f761541 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -12,7 +12,7 @@ pkgver=1.26.0
+ pkgrel=1
+ pkgdesc="Multimedia graph framework (32-bit)"
+ url="https://gstreamer.freedesktop.org/"
+-arch=(x86_64)
++arch=(aarch64)
+ license=(LGPL-2.1-or-later)
+ makedepends=(
+   git
+@@ -97,6 +97,7 @@ build() {
+   local meson_options=(
+     --cross-file lib32
+     --libexecdir lib32
++    --includedir include32
+     -D bad=disabled
+     -D benchmarks=disabled
+     -D devtools=disabled
+@@ -135,6 +136,10 @@ build() {
+   # https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/3197
+   export GI_SCANNER_DISABLE_CACHE=1
+ 
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
++
+   arch-meson gstreamer build "${meson_options[@]}"
+   meson compile -C build
+ }

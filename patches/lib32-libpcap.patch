@@ -1,0 +1,42 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 0ae8654..f4e0033 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -9,7 +9,7 @@ _name=${pkgname/*-/}
+ pkgver=1.10.5
+ pkgrel=2
+ pkgdesc="A system-independent interface for user-level packet capture (32-bit)"
+-arch=(x86_64)
++arch=(aarch64)
+ url="http://www.tcpdump.org/"
+ _url=https://github.com/the-tcpdump-group/libpcap
+ license=(BSD-3-Clause)
+@@ -39,14 +39,15 @@ build() {
+   local configure_options=(
+     --prefix=/usr
+     --libdir=/usr/lib32
++    --includedir=/usr/include32
+     --enable-ipv6
+-    --enable-bluetooth
++#    --enable-bluetooth
+     --enable-usb
+     --with-libnl
+   )
+-  export CC="gcc -m32"
+-  export CXX="g++ -m32"
+-  export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   cd $_name
+   ./configure "${configure_options[@]}"
+@@ -63,7 +64,7 @@ package() {
+   make DESTDIR="$pkgdir" install
+ 
+   # remove files provided by libpcap
+-  rm -rf "$pkgdir/usr/"{include,share,bin}
++  rm -rf "$pkgdir/usr/"{share,bin}
+ 
+   install -vDm 644 LICENSE -t "$pkgdir/usr/share/licenses/$pkgname/"
+   install -vDm 644 {CHANGES,{CONTRIBUTING,README}.md} -t "$pkgdir/usr/share/doc/$pkgname/"

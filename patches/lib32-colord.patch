@@ -1,0 +1,34 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 8e9ec5d..568b238 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -52,12 +52,13 @@ prepare() {
+ }
+ 
+ build() {
+-  export CC='gcc -m32'
+-  export CXX='g++ -m32'
+-  export PKG_CONFIG=i686-pc-linux-gnu-pkg-config
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   arch-meson colord build \
+     --libdir=/usr/lib32 \
++    --includedir=/usr/include32 \
+     -D docs=false \
+     -D man=false \
+     -D tests=false \
+@@ -72,10 +73,11 @@ build() {
+ 
+ package() {
+   DESTDIR="${pkgdir}" meson install -C build
+-  rm -r "${pkgdir}"/usr/{bin,include,lib,share}
++  rm -r "${pkgdir}"/usr/{bin,share}
+   rm -r "${pkgdir}"/usr/lib32/{colord-plugins,colord-sensors}
+   rm "${pkgdir}"/usr/lib32/libcolor{dprivate,hug}*
+   rm "${pkgdir}"/usr/lib32/pkgconfig/colorhug.pc
++  mv "${pkgdir}"/usr/lib/* "${pkgdir}"/usr/lib32
+ }
+ 
+ # vim: ts=2 sw=2 et:

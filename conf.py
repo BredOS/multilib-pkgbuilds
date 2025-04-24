@@ -7,8 +7,28 @@ repos = [
     "https://geo.mirror.pkgbuild.com/multilib/os/x86_64/multilib.db.tar.gz",
     "http://dk.mirror.archlinuxarm.org/armv7h/extra/extra.db.tar.gz",
 ]
+# lib32-vulkan-broadcom
+# lib32-vulkan-freedreno
+# lib32-vulkan-headers
+# lib32-vulkan-icd-loader
+# lib32-vulkan-mesa-layers
+# lib32-vulkan-panfrost
+# lib32-vulkan-radeon
+# lib32-vulkan-swrast
+# lib32-vulkan-virtio
 
 ignore = [
+    "lib32-clang",
+    "lib32-libelf",
+    "lib32-libpulse",
+    "lib32-libpng",
+    "lib32-llvm",
+    "lib32-llvm-libs",
+    "lib32-systemd",
+    "lib32-vulkan-icd-loader",
+    "lib32-vulkan-mesa-layers",
+    "lib32-vulkan-radeon",
+    "lib32-vulkan-swrast",
     "lib32-libxcrypt-compat",
     "lib32-libcurl-compat",
     "lib32-libcurl-gnutls",
@@ -26,6 +46,18 @@ ignore = [
     "lib32-spirv-llvm-translator",
     "lib32-harfbuzz-cairo",
     "lib32-harfbuzz-icu",
+    "lib32-vulkan-headers",
+    "lib32-vulkan-icd-loader",
+    "lib32-vulkan-intel",
+    "lib32-vulkan-radeon",
+    "lib32-vulkan-swrast",
+    "lib32-vulkan-tools",
+    "lib32-vulkan-validation-layers",
+    "lib32-vulkan-virtio",
+    "lib32-libmysofa",
+    "lib32-directx-headers",
+    "steam"
+
 ]
 
 alias = {
@@ -41,6 +73,7 @@ alias = {
 }
 
 localpkgs = [
+    "lib32-fuse3",
     "lib32-glibc",
     "lib32-xtrans",
     "lib32-xorgproto",

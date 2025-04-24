@@ -1,32 +1,33 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index 641796f..faff4c8 100644
+index ad8bf44..7aa4fe4 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
-@@ -36,14 +36,15 @@ build() {
-     --enable-pcre2-16
-     --enable-pcre2-32
+@@ -59,15 +59,15 @@ build() {
+     --enable-pcre2grep-libz
+     --enable-pcre2test-libreadline
      --libdir=/usr/lib32
 +    --includedir=/usr/include32
      --prefix=/usr
    )
  
-   cd $_name-$pkgver
+   cd $_name
  
--  export CC="gcc -m32"
--  export CXX="g++ -m32"
--  export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
+-  export CFLAGS+=" -m32"
+-  export CXXFLAGS+=" -m32"
+-  export LDFLAGS+=" -m32"
+-  export PKG_CONFIG_PATH='/usr/lib32/pkgconfig'
 +  export CC="armv7h-linux-gnueabihf-gcc"
 +  export CXX="armv7h-linux-gnueabihf-g++"
 +  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
  
    ./configure "${configure_options[@]}"
    make
-@@ -56,7 +57,7 @@ check() {
+@@ -80,7 +80,7 @@ check() {
  package() {
-   make DESTDIR="$pkgdir" install -C $_name-$pkgver
+   make DESTDIR="$pkgdir" install -C $_name
  
 -  rm -rv "$pkgdir"/usr/{bin,share,include}
 +  rm -rv "$pkgdir"/usr/{bin,share}
  
-   install -vDm644 $_name-$pkgver/LICENCE -t "$pkgdir/usr/share/licenses/$pkgname/"
+   install -Dm644 ./*.txt -t "$pkgdir/usr/share/licenses/$pkgname/"
  }

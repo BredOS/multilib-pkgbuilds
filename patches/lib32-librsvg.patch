@@ -1,0 +1,36 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 9c00ab9..24839d3 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -55,14 +55,20 @@ prepare() {
+ 
+ build() {
+   local meson_options=(
+-    --cross-file=lib32
++    --libdir /usr/lib32
++    --includedir /usr/include32
+     -D avif=disabled
+     -D docs=disabled
+     -D introspection=disabled
+-    -D triplet=i686-unknown-linux-gnu
++    -D triplet=armv7-unknown-linux-gnueabihf
+     -D vala=disabled
+   )
+ 
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
++  export CARGO_TARGET_ARMV7_UNKNOWN_LINUX_GNUEABIHF_LINKER=armv7h-linux-gnueabihf-gcc
++
+   arch-meson librsvg build "${meson_options[@]}"
+   meson compile -C build
+ }
+@@ -76,7 +82,7 @@ package_lib32-librsvg() {
+ 
+   meson install -C build --destdir "$pkgdir" --no-rebuild
+ 
+-  rm -r "$pkgdir"/usr/{bin,include,share}
++  rm -r "$pkgdir"/usr/{bin,share}
+ }
+ 
+ # vim:set sw=2 sts=-1 et:
