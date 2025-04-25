@@ -1,5 +1,5 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index cdbdcc6..b91dfd5 100644
+index cdbdcc6..05f4049 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
 @@ -44,6 +44,7 @@ build() {
@@ -23,12 +23,12 @@ index cdbdcc6..b91dfd5 100644
  
    cmake -S flac -B build -G Ninja "${cmake_options[@]}"
    cmake --build build
-@@ -74,7 +75,7 @@ package_lib32-flac() {
+@@ -74,8 +75,6 @@ package_lib32-flac() {
  
    DESTDIR="${pkgdir}" cmake --install build
  
 -  rm -r "${pkgdir}/usr/include"
-+  rm -r "${pkgdir}/usr/include32"
- 
+-
    install -Dm 644 flac/COPYING.Xiph -t "${pkgdir}/usr/share/licenses/${pkgname}"
  }
+ 
