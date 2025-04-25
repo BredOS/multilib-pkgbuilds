@@ -1,8 +1,8 @@
-diff --git a/PKGBUILD b/PKGBUILD
-index 486d382..6f04bf6 100644
---- a/PKGBUILD
-+++ b/PKGBUILD
-@@ -59,27 +59,32 @@ prepare() {
+diff --git i/PKGBUILD w/PKGBUILD
+index 2af9e6b..a6ed254 100644
+--- i/PKGBUILD
++++ w/PKGBUILD
+@@ -61,27 +61,33 @@ prepare() {
  build() {
    cd "$srcdir/clang-$pkgver.src/build"
  
@@ -16,9 +16,10 @@ index 486d382..6f04bf6 100644
      -G Ninja
      -DCMAKE_BUILD_TYPE=Release
 -    -DCMAKE_INSTALL_PREFIX=/usr
-+    -DCMAKE_INSTALL_INCLUDEDIR=/usr/include32
++    -DCMAKE_INSTALL_INCLUDEDIR=include32
 +    -DCMAKE_INSTALL_PREFIX=/usr/armv7h-linux-gnueabihf
      -DCMAKE_SKIP_RPATH=ON
++    -DCLANG_INSTALL_PREFIX=/usr
      -DCLANG_DEFAULT_PIE_ON_LINUX=ON
      -DCLANG_LINK_CLANG_DYLIB=ON
 -    -DCMAKE_CXX_FLAGS:STRING=-m32
@@ -41,7 +42,7 @@ index 486d382..6f04bf6 100644
      -DLLVM_MAIN_SRC_DIR="$srcdir/llvm-$pkgver.src"
    )
  
-@@ -89,6 +94,9 @@ build() {
+@@ -91,6 +97,9 @@ build() {
    cmake_args+=(-DLLVM_DISTRIBUTION_COMPONENTS="$distribution_components")
  
    cmake .. "${cmake_args[@]}"
@@ -51,7 +52,7 @@ index 486d382..6f04bf6 100644
    ninja
  }
  
-@@ -96,7 +104,8 @@ package() {
+@@ -98,7 +107,8 @@ package() {
    cd clang-$pkgver.src/build
  
    DESTDIR="$pkgdir" ninja install-distribution
