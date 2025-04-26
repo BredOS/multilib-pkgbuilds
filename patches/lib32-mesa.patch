@@ -1,25 +1,27 @@
-diff --git a/PKGBUILD b/PKGBUILD
-index d5eeb17..ca913ff 100644
---- a/PKGBUILD
-+++ b/PKGBUILD
-@@ -10,13 +10,13 @@ pkgname=(
-   lib32-libva-mesa-driver
-   lib32-mesa-vdpau
+diff --git i/PKGBUILD w/PKGBUILD
+index 95d7cf1..d649d06 100644
+--- i/PKGBUILD
++++ w/PKGBUILD
+@@ -8,15 +8,15 @@ pkgbase=lib32-mesa
+ pkgname=(
+   lib32-mesa
    lib32-opencl-clover-mesa
 -  lib32-opencl-rusticl-mesa
+   lib32-vulkan-dzn
+   lib32-vulkan-gfxstream
 -  lib32-vulkan-intel
-   lib32-vulkan-mesa-layers
 -  lib32-vulkan-nouveau
    lib32-vulkan-radeon
    lib32-vulkan-swrast
    lib32-vulkan-virtio
+   lib32-vulkan-mesa-layers
 +  lib32-vulkan-broadcom
 +  lib32-vulkan-panfrost
 +  lib32-vulkan-freedreno
  )
- pkgver=24.1.4
- pkgrel=2
-@@ -46,7 +46,6 @@ makedepends=(
+ pkgver=25.0.4
+ pkgrel=1
+@@ -47,7 +47,6 @@ makedepends=(
    lib32-llvm
    lib32-llvm-libs
    lib32-lm_sensors
@@ -27,10 +29,10 @@ index d5eeb17..ca913ff 100644
    lib32-spirv-llvm-translator
    lib32-spirv-tools
    lib32-systemd
-@@ -67,9 +66,10 @@ makedepends=(
-   python-mako
+@@ -69,9 +68,10 @@ makedepends=(
    python-packaging
    python-ply
+   python-yaml
 -  rust-bindgen
    wayland-protocols
 -  xorgproto
@@ -40,7 +42,7 @@ index d5eeb17..ca913ff 100644
  )
  options=(
    # GCC 14 LTO causes segfault in LLVM under si_llvm_optimize_module
-@@ -141,16 +141,18 @@ prepare() {
+@@ -171,15 +171,17 @@ prepare() {
  }
  
  build() {
@@ -50,55 +52,59 @@ index d5eeb17..ca913ff 100644
 +    --cross-file arm-lib32
      -D android-libbacktrace=disabled
      -D b_ndebug=true
--    -D gallium-drivers=r300,r600,radeonsi,nouveau,virgl,svga,swrast,i915,iris,crocus,zink
-+    -D gallium-drivers=r300,r600,radeonsi,freedreno,nouveau,swrast,virgl,d3d12,etnaviv,kmsro,lima,panfrost,svga,v3d,vc4
+-    -D gallium-drivers=r300,r600,radeonsi,nouveau,virgl,svga,llvmpipe,softpipe,iris,crocus,i915,zink,d3d12
++    -D gallium-drivers=r300,r600,radeonsi,freedreno,nouveau,softpipe,llvmpipe,virgl,d3d12,etnaviv,lima,panfrost,svga,v3d,vc4
      -D gallium-extra-hud=true
      -D gallium-nine=true
--    -D gallium-omx=disabled
-+    -D gallium-omx=bellagio
      -D gallium-opencl=icd
 -    -D gallium-rusticl=true
 +    -D gallium-rusticl=false
 +    -D gallium-xa=disabled
      -D gles1=disabled
-     -D glx=dri
-     -D intel-clc=enabled
-@@ -161,11 +163,10 @@ build() {
-     -D platforms=x11,wayland
+     -D html-docs=disabled
+     -D libunwind=disabled
+@@ -187,12 +189,10 @@ build() {
+     -D osmesa=true
      -D valgrind=disabled
      -D video-codecs=all
--    -D vulkan-drivers=amd,intel,intel_hasvk,swrast,virtio,nouveau
--    -D vulkan-layers=device-select,intel-nullhw,overlay
+-    -D vulkan-drivers=amd,gfxstream,intel,intel_hasvk,nouveau,swrast,virtio,microsoft-experimental
+-    -D vulkan-layers=device-select,intel-nullhw,overlay,screenshot,vram-report-limit
 +    -D vulkan-drivers=amd,swrast,broadcom,panfrost,virtio,freedreno
 +    -D vulkan-layers=device-select,overlay
    )
  
 -  export BINDGEN_EXTRA_CLANG_ARGS="-m32"
- 
+-
    # Build only minimal debug info to reduce size
    CFLAGS+=" -g1"
-@@ -232,16 +233,8 @@ package_lib32-mesa() {
+   CXXFLAGS+=" -g1"
+@@ -266,8 +266,6 @@ package_lib32-mesa() {
      _pick clover $libdir/gallium-pipe
      _pick clover $libdir/libMesaOpenCL*
  
 -    _pick clrust $libdir/libRusticlOpenCL*
 -
--    _pick vkintel $icddir/intel_*.json
--    _pick vkintel $libdir/libvulkan_intel*.so
--
-     _pick vklayer $libdir/libVkLayer_*.so
+     _pick vkdzn $icddir/dzn_icd.*.json
+     _pick vkdzn $libdir/libvulkan_dzn.so
+     _pick vkdzn $libdir/libspirv_to_dxil.*
+@@ -275,12 +273,6 @@ package_lib32-mesa() {
+     _pick vkgfxstr $icddir/gfxstream_vk_icd.*.json
+     _pick vkgfxstr $libdir/libvulkan_gfxstream.so
  
--    _pick vknvidia $icddir/nouveau_*.json
--    _pick vknvidia $libdir/libvulkan_nouveau*.so
+-    _pick vkintel $icddir/intel{,_hasvk}_icd.*.json
+-    _pick vkintel $libdir/libvulkan_intel{,_hasvk}.so
 -
-     _pick vkradeon $icddir/radeon_icd*.json
+-    _pick vknvidia $icddir/nouveau_icd.*.json
+-    _pick vknvidia $libdir/libvulkan_nouveau.so
+-
+     _pick vkradeon $icddir/radeon_icd.*.json
      _pick vkradeon $libdir/libvulkan_radeon.so
  
-@@ -250,8 +243,17 @@ package_lib32-mesa() {
+@@ -292,7 +284,16 @@ package_lib32-mesa() {
  
-     _pick vkvirtio $icddir/virtio_icd*.json
-     _pick vkvirtio $libdir/libvulkan_virtio.so
-+    
+     _pick vklayer $libdir/libVkLayer_*.so
+ 
+-    rm -rv etc usr/{bin,include,share}
 +    _pick vkbroadcom $icddir/broadcom_icd*.json
 +    _pick vkbroadcom $libdir/libvulkan_broadcom.so
 +
@@ -107,13 +113,12 @@ index d5eeb17..ca913ff 100644
 +
 +    _pick vkfreedreno $icddir/freedreno_icd*.json
 +    _pick vkfreedreno $libdir/libvulkan_freedreno.so
- 
--    rm -rv etc usr/{bin,include,share}
++
 +    rm -rv etc usr/{bin,share}
  
      # indirect rendering
      ln -sr $libdir/libGLX_{mesa,indirect}.so.0
-@@ -362,33 +364,6 @@ package_lib32-opencl-rusticl-mesa() {
+@@ -407,34 +408,6 @@ package_lib32-vulkan-gfxstream() {
    install -Dm644 mesa-$pkgver/docs/license.rst -t "$pkgdir/usr/share/licenses/$pkgname"
  }
  
@@ -127,6 +132,7 @@ index d5eeb17..ca913ff 100644
 -    lib32-libx11
 -    lib32-libxcb
 -    lib32-libxshmfence
+-    lib32-spirv-tools
 -    lib32-systemd
 -    lib32-vulkan-icd-loader
 -    lib32-wayland
@@ -144,10 +150,10 @@ index d5eeb17..ca913ff 100644
 -  install -Dm644 mesa-$pkgver/docs/license.rst -t "$pkgdir/usr/share/licenses/$pkgname"
 -}
 -
- package_lib32-vulkan-mesa-layers() {
-   pkgdesc="Mesa's Vulkan layers - 32-bit"
+ package_lib32-vulkan-nouveau() {
+   pkgdesc="Open-source Vulkan driver for Nvidia GPUs - 32-bit"
    depends=(
-@@ -522,3 +497,50 @@ package_lib32-vulkan-virtio() {
+@@ -572,3 +545,50 @@ package_lib32-vulkan-mesa-layers() {
  }
  
  # vim:set sw=2 sts=-1 et:
@@ -198,4 +204,3 @@ index d5eeb17..ca913ff 100644
 +
 +  install -Dm644 mesa-$pkgver/docs/license.rst -t "$pkgdir/usr/share/licenses/$pkgname"
 +}
-\ No newline at end of file
