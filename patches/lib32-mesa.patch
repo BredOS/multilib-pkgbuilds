@@ -1,5 +1,5 @@
 diff --git i/PKGBUILD w/PKGBUILD
-index 95d7cf1..d649d06 100644
+index 95d7cf1..7771495 100644
 --- i/PKGBUILD
 +++ w/PKGBUILD
 @@ -8,15 +8,15 @@ pkgbase=lib32-mesa
@@ -78,7 +78,17 @@ index 95d7cf1..d649d06 100644
    # Build only minimal debug info to reduce size
    CFLAGS+=" -g1"
    CXXFLAGS+=" -g1"
-@@ -266,8 +266,6 @@ package_lib32-mesa() {
+@@ -201,6 +201,9 @@ build() {
+   export MESON_PACKAGE_CACHE_DIR="$srcdir"
+ 
+   arch-meson mesa-$pkgver build "${meson_options[@]}"
++  sed -i 's|-I/usr/include |-I/usr/include32 |' $srcdir/build/build.ninja
++  sed -i 's|-Iinclude |-Iinclude32 |' $srcdir/build/build.ninja
++  sed -i 's|-DLIBCLC_INCLUDEDIR="/usr/include/"|-DLIBCLC_INCLUDEDIR="/usr/include32/"|' $srcdir/build/{compile_commands.json,build.ninja}
+   meson compile -C build
+ }
+ 
+@@ -266,8 +269,6 @@ package_lib32-mesa() {
      _pick clover $libdir/gallium-pipe
      _pick clover $libdir/libMesaOpenCL*
  
@@ -87,7 +97,7 @@ index 95d7cf1..d649d06 100644
      _pick vkdzn $icddir/dzn_icd.*.json
      _pick vkdzn $libdir/libvulkan_dzn.so
      _pick vkdzn $libdir/libspirv_to_dxil.*
-@@ -275,12 +273,6 @@ package_lib32-mesa() {
+@@ -275,12 +276,6 @@ package_lib32-mesa() {
      _pick vkgfxstr $icddir/gfxstream_vk_icd.*.json
      _pick vkgfxstr $libdir/libvulkan_gfxstream.so
  
@@ -100,7 +110,7 @@ index 95d7cf1..d649d06 100644
      _pick vkradeon $icddir/radeon_icd.*.json
      _pick vkradeon $libdir/libvulkan_radeon.so
  
-@@ -292,7 +284,16 @@ package_lib32-mesa() {
+@@ -292,7 +287,16 @@ package_lib32-mesa() {
  
      _pick vklayer $libdir/libVkLayer_*.so
  
@@ -118,7 +128,7 @@ index 95d7cf1..d649d06 100644
  
      # indirect rendering
      ln -sr $libdir/libGLX_{mesa,indirect}.so.0
-@@ -407,34 +408,6 @@ package_lib32-vulkan-gfxstream() {
+@@ -407,34 +411,6 @@ package_lib32-vulkan-gfxstream() {
    install -Dm644 mesa-$pkgver/docs/license.rst -t "$pkgdir/usr/share/licenses/$pkgname"
  }
  
@@ -153,7 +163,7 @@ index 95d7cf1..d649d06 100644
  package_lib32-vulkan-nouveau() {
    pkgdesc="Open-source Vulkan driver for Nvidia GPUs - 32-bit"
    depends=(
-@@ -572,3 +545,50 @@ package_lib32-vulkan-mesa-layers() {
+@@ -572,3 +548,50 @@ package_lib32-vulkan-mesa-layers() {
  }
  
  # vim:set sw=2 sts=-1 et:
