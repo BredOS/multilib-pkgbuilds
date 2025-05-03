@@ -1,14 +1,14 @@
-diff --git i/PKGBUILD w/PKGBUILD
-index 95d7cf1..7771495 100644
---- i/PKGBUILD
-+++ w/PKGBUILD
-@@ -8,15 +8,15 @@ pkgbase=lib32-mesa
+diff --git a/PKGBUILD b/PKGBUILD
+index 95d7cf1..37cd54c 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -8,15 +8,13 @@ pkgbase=lib32-mesa
  pkgname=(
    lib32-mesa
    lib32-opencl-clover-mesa
 -  lib32-opencl-rusticl-mesa
-   lib32-vulkan-dzn
-   lib32-vulkan-gfxstream
+-  lib32-vulkan-dzn
+-  lib32-vulkan-gfxstream
 -  lib32-vulkan-intel
 -  lib32-vulkan-nouveau
    lib32-vulkan-radeon
@@ -21,7 +21,7 @@ index 95d7cf1..7771495 100644
  )
  pkgver=25.0.4
  pkgrel=1
-@@ -47,7 +47,6 @@ makedepends=(
+@@ -47,7 +45,6 @@ makedepends=(
    lib32-llvm
    lib32-llvm-libs
    lib32-lm_sensors
@@ -29,7 +29,7 @@ index 95d7cf1..7771495 100644
    lib32-spirv-llvm-translator
    lib32-spirv-tools
    lib32-systemd
-@@ -69,9 +68,10 @@ makedepends=(
+@@ -69,9 +66,10 @@ makedepends=(
    python-packaging
    python-ply
    python-yaml
@@ -42,7 +42,7 @@ index 95d7cf1..7771495 100644
  )
  options=(
    # GCC 14 LTO causes segfault in LLVM under si_llvm_optimize_module
-@@ -171,15 +171,17 @@ prepare() {
+@@ -171,15 +169,17 @@ prepare() {
  }
  
  build() {
@@ -63,7 +63,7 @@ index 95d7cf1..7771495 100644
      -D gles1=disabled
      -D html-docs=disabled
      -D libunwind=disabled
-@@ -187,12 +189,10 @@ build() {
+@@ -187,19 +187,16 @@ build() {
      -D osmesa=true
      -D valgrind=disabled
      -D video-codecs=all
@@ -78,29 +78,26 @@ index 95d7cf1..7771495 100644
    # Build only minimal debug info to reduce size
    CFLAGS+=" -g1"
    CXXFLAGS+=" -g1"
-@@ -201,6 +201,9 @@ build() {
-   export MESON_PACKAGE_CACHE_DIR="$srcdir"
  
+   # Inject subproject packages
+   export MESON_PACKAGE_CACHE_DIR="$srcdir"
+-
    arch-meson mesa-$pkgver build "${meson_options[@]}"
-+  sed -i 's|-I/usr/include |-I/usr/include32 |' $srcdir/build/build.ninja
-+  sed -i 's|-Iinclude |-Iinclude32 |' $srcdir/build/build.ninja
-+  sed -i 's|-DLIBCLC_INCLUDEDIR="/usr/include/"|-DLIBCLC_INCLUDEDIR="/usr/include32/"|' $srcdir/build/{compile_commands.json,build.ninja}
    meson compile -C build
  }
- 
-@@ -266,8 +269,6 @@ package_lib32-mesa() {
+@@ -266,21 +263,6 @@ package_lib32-mesa() {
      _pick clover $libdir/gallium-pipe
      _pick clover $libdir/libMesaOpenCL*
  
 -    _pick clrust $libdir/libRusticlOpenCL*
 -
-     _pick vkdzn $icddir/dzn_icd.*.json
-     _pick vkdzn $libdir/libvulkan_dzn.so
-     _pick vkdzn $libdir/libspirv_to_dxil.*
-@@ -275,12 +276,6 @@ package_lib32-mesa() {
-     _pick vkgfxstr $icddir/gfxstream_vk_icd.*.json
-     _pick vkgfxstr $libdir/libvulkan_gfxstream.so
- 
+-    _pick vkdzn $icddir/dzn_icd.*.json
+-    _pick vkdzn $libdir/libvulkan_dzn.so
+-    _pick vkdzn $libdir/libspirv_to_dxil.*
+-
+-    _pick vkgfxstr $icddir/gfxstream_vk_icd.*.json
+-    _pick vkgfxstr $libdir/libvulkan_gfxstream.so
+-
 -    _pick vkintel $icddir/intel{,_hasvk}_icd.*.json
 -    _pick vkintel $libdir/libvulkan_intel{,_hasvk}.so
 -
@@ -110,7 +107,7 @@ index 95d7cf1..7771495 100644
      _pick vkradeon $icddir/radeon_icd.*.json
      _pick vkradeon $libdir/libvulkan_radeon.so
  
-@@ -292,7 +287,16 @@ package_lib32-mesa() {
+@@ -292,7 +274,16 @@ package_lib32-mesa() {
  
      _pick vklayer $libdir/libVkLayer_*.so
  
@@ -128,42 +125,7 @@ index 95d7cf1..7771495 100644
  
      # indirect rendering
      ln -sr $libdir/libGLX_{mesa,indirect}.so.0
-@@ -407,34 +411,6 @@ package_lib32-vulkan-gfxstream() {
-   install -Dm644 mesa-$pkgver/docs/license.rst -t "$pkgdir/usr/share/licenses/$pkgname"
- }
- 
--package_lib32-vulkan-intel() {
--  pkgdesc="Open-source Vulkan driver for Intel GPUs - 32-bit"
--  depends=(
--    lib32-expat
--    lib32-gcc-libs
--    lib32-glibc
--    lib32-libdrm
--    lib32-libx11
--    lib32-libxcb
--    lib32-libxshmfence
--    lib32-spirv-tools
--    lib32-systemd
--    lib32-vulkan-icd-loader
--    lib32-wayland
--    lib32-xcb-util-keysyms
--    lib32-zlib
--    lib32-zstd
--
--    vulkan-intel
--  )
--  optdepends=("lib32-vulkan-mesa-layers: additional vulkan layers")
--  provides=(lib32-vulkan-driver)
--
--  mv vkintel/* "$pkgdir"
--
--  install -Dm644 mesa-$pkgver/docs/license.rst -t "$pkgdir/usr/share/licenses/$pkgname"
--}
--
- package_lib32-vulkan-nouveau() {
-   pkgdesc="Open-source Vulkan driver for Nvidia GPUs - 32-bit"
-   depends=(
-@@ -572,3 +548,50 @@ package_lib32-vulkan-mesa-layers() {
+@@ -572,3 +563,50 @@ package_lib32-vulkan-mesa-layers() {
  }
  
  # vim:set sw=2 sts=-1 et:

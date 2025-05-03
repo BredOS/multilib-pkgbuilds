@@ -1,7 +1,7 @@
-diff --git i/PKGBUILD w/PKGBUILD
-index 2af9e6b..a6ed254 100644
---- i/PKGBUILD
-+++ w/PKGBUILD
+diff --git a/PKGBUILD b/PKGBUILD
+index 2af9e6b..0265b43 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
 @@ -61,27 +61,33 @@ prepare() {
  build() {
    cd "$srcdir/clang-$pkgver.src/build"
@@ -52,13 +52,14 @@ index 2af9e6b..a6ed254 100644
    ninja
  }
  
-@@ -98,7 +107,8 @@ package() {
+@@ -98,7 +107,9 @@ package() {
    cd clang-$pkgver.src/build
  
    DESTDIR="$pkgdir" ninja install-distribution
 -  rm -rf "$pkgdir"/usr/{bin,include,lib,libexec,share}
 +  rm -rf "$pkgdir"/usr/armv7h-linux-gnueabihf/share/
 +  mv "$pkgdir"/usr/armv7h-linux-gnueabihf/lib "$pkgdir"/usr/lib32
++  mv "$pkgdir"/usr/armv7h-linux-gnueabihf/include32 "$pkgdir"/usr/include32
  
    install -Dm644 ../LICENSE.TXT "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
  }
