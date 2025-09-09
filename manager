@@ -211,6 +211,10 @@ def main():
         "updateoldpkgs", help="Update outdated packages"
     )
 
+    update_outdated_parser = subparsers.add_parser(
+        "printoldpkgs", help="List outdated packages"
+    )
+
     pull_and_edit_parser = subparsers.add_parser(
         "localedit",
         help="Pulls a package in the current directory and applies the patch made by BredOS so you can edit it before building",
@@ -234,6 +238,8 @@ def main():
             pull_pkg(pkg, aur=args.a)
     elif args.command == "updateoldpkgs":
         update_outdated_packages()
+    elif args.command == "printoldpkgs":
+        print("\n".join(check_for_outdated_packages()))
     elif args.command == "localedit":
         pull_and_patch(args.package)
     else:

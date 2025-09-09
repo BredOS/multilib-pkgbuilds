@@ -1,8 +1,8 @@
-diff --git a/PKGBUILD b/PKGBUILD
-index cea22c3..d566387 100644
---- a/PKGBUILD
-+++ b/PKGBUILD
-@@ -31,11 +31,13 @@ build() {
+diff --git i/PKGBUILD w/PKGBUILD
+index de286d1..af44cb0 100644
+--- i/PKGBUILD
++++ w/PKGBUILD
+@@ -33,11 +33,13 @@ build() {
    local configure_options=(
      --prefix=/usr
      --libdir=/usr/lib32
@@ -16,12 +16,12 @@ index cea22c3..d566387 100644
 +  export CXX="armv7h-linux-gnueabihf-g++"
 +  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
  
-   cd $_name-$pkgver
+   cd $_name
    ./configure "${configure_options[@]}"
-@@ -46,6 +48,5 @@ build() {
+@@ -48,6 +50,5 @@ build() {
  
  package () {
-   make DESTDIR="$pkgdir" install -C $_name-$pkgver
+   make DESTDIR="$pkgdir" install -C $_name
 -  rm -rf "$pkgdir"/usr/include
-   install -vDm 644 $_name-$pkgver/{AUTHORS,ChangeLog,NEWS,README,TODO} -t "$pkgdir/usr/share/doc/$pkgname/"
+   install -vDm 644 $_name/{AUTHORS,ChangeLog,NEWS,README,TODO} -t "$pkgdir/usr/share/doc/$pkgname/"
  }
