@@ -152,10 +152,15 @@ def check_for_outdated_packages() -> list:
     return compare.lists()
 
 
-def update_outdated_packages() -> None:
+def update_outdated_packages(force: bool = False) -> None:
     outdated_packages = check_for_outdated_packages()
     for package in outdated_packages:
-        build_pkg(package)
+        try:
+            build_pkg(package)
+        except Exception as e:
+            lp(f"Build failed for {package}: {e}", mode="error")
+            if not force:
+                raise
 
 
 def pull_and_patch(pkgname):
@@ -207,11 +212,16 @@ def main():
         "package", type=str, help="Package name or comma seperated list of packages"
     )
 
-    update_outdated_parser = subparsers.add_parser(
+    updateold_parser = subparsers.add_parser(
         "updateoldpkgs", help="Update outdated packages"
     )
+    updateold_parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Continue building remaining packages even if some fail",
+    )
 
-    update_outdated_parser = subparsers.add_parser(
+    printold_parser = subparsers.add_parser(
         "printoldpkgs", help="List outdated packages"
     )
 
@@ -237,7 +247,8 @@ def main():
         for pkg in args.package.split(","):
             pull_pkg(pkg, aur=args.a)
     elif args.command == "updateoldpkgs":
-        update_outdated_packages()
+        # Pass through the --force flag so update_outdated_packages can continue on failures
+        update_outdated_packages(force=args.force)
     elif args.command == "printoldpkgs":
         print("\n".join(check_for_outdated_packages()))
     elif args.command == "localedit":

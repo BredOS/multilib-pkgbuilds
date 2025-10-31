@@ -1,19 +1,18 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index fdeaaf0..b4fe4c6 100644
+index bb6a532..a2cdb90 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
-@@ -42,7 +42,8 @@ prepare() {
+@@ -39,7 +39,7 @@ prepare() {
  
  build() {
    local meson_options=(
 -    --cross-file lib32
-+    --libdir /usr/lib32
-+    --includedir /usr/include32
++    --cross-file arm-lib32
+     -D android=disabled
      -D builtin_loaders=all
-     -D gtk_doc=false
-     -D installed_tests=false
-@@ -51,6 +52,10 @@ build() {
-     -D others=enabled
+     -D documentation=false
+@@ -56,6 +56,10 @@ build() {
+     -D tiff=enabled
    )
  
 +  export CC="armv7h-linux-gnueabihf-gcc"
@@ -23,7 +22,7 @@ index fdeaaf0..b4fe4c6 100644
    arch-meson gdk-pixbuf build "${meson_options[@]}"
    meson compile -C build
  }
-@@ -65,7 +70,7 @@ package() {
+@@ -69,7 +73,7 @@ package() {
  
    meson install -C build --destdir "$pkgdir"
  

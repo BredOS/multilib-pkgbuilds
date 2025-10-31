@@ -1,0 +1,23 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 4a9e1d9..ffa8222 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -21,15 +21,15 @@ prepare() {
+ }
+ 
+ build() {
+-    export CFLAGS+=' -m32'
+-    export LDFLAGS+=' -m32'
++    export CC="armv7h-linux-gnueabihf-gcc"
++    export CXX="armv7h-linux-gnueabihf-g++"
+     export PKG_CONFIG_PATH='/usr/lib32/pkgconfig'
+     
+     cd "sndio-$pkgver"
+     ./configure \
+         --prefix='/usr' \
+         --libdir='/usr/lib32' \
+-        --includedir='/usr/include/sndio32' \
++        --includedir='/usr/include32' \
+         --enable-alsa \
+         --without-libbsd
+     make
