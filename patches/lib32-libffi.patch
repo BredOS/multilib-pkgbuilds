@@ -1,20 +1,20 @@
 diff --git i/PKGBUILD w/PKGBUILD
-index e16f3a6..cf02782 100644
+index 3ac85e7..3e714ac 100644
 --- i/PKGBUILD
 +++ w/PKGBUILD
 @@ -13,8 +13,8 @@ license=(MIT)
  depends=(lib32-glibc $_name=$pkgver)
  provides=(libffi.so)
  source=($_name-$pkgver.tar.gz::$_url/archive/refs/tags/v$pkgver.tar.gz)
--sha256sums=('ca180dccd8e26900a169efd6e09207eaa0a9be268010b8faec10476c9c4951d9')
--b2sums=('76864af6b1567aae025c28aad358e377117ed15f7dd123998a8dfd4330b37b5874ac70ff3789621590638b7d9b9366554ad656f08d3bac371f2c6dbe1fc336d6')
+-sha256sums=('dd19253d3007f366319a51d248a40c9e5fcace4498cbea990b566291844e4e30')
+-b2sums=('4aa7ecdbb7abc862f876cc0b0484f944fe6c49633071d36a964ad94f06d02ee08c76dceed5d6897da02c357515033f084a9a4da3a22bdd559316a5dca736332d')
 +sha256sums=('SKIP')
 +b2sums=('SKIP')
-
+ 
  prepare() {
    cd $_name-$pkgver
 @@ -24,18 +24,18 @@ prepare() {
-
+ 
  build() {
    local prepare_options=(
 -    --build=i686-pc-linux-gnu
@@ -27,14 +27,14 @@ index e16f3a6..cf02782 100644
 +    --includedir=/usr/include32
      --prefix=/usr
    )
-
+ 
 -  export CFLAGS+=" -m32"
 -  export CXXFLAGS+=" -m32"
 -  export LDFLAGS+=" -m32"
 +  export CC="armv7h-linux-gnueabihf-gcc"
 +  export CXX="armv7h-linux-gnueabihf-g++"
    export PKG_CONFIG_PATH='/usr/lib32/pkgconfig'
-
+ 
    cd $_name-$pkgver
 @@ -46,7 +46,7 @@ build() {
  package() {
@@ -44,4 +44,4 @@ index e16f3a6..cf02782 100644
 +  rm -r "$pkgdir"/usr/share
    install -Dm 644 LICENSE -t "$pkgdir"/usr/share/licenses/$pkgname
  }
-
+ 

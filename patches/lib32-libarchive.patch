@@ -1,8 +1,17 @@
-diff --git a/PKGBUILD b/PKGBUILD
-index 7c79e25..0adb96a 100644
---- a/PKGBUILD
-+++ b/PKGBUILD
-@@ -47,7 +47,7 @@ prepare() {
+diff --git i/PKGBUILD w/PKGBUILD
+index 325174a..f842ea2 100644
+--- i/PKGBUILD
++++ w/PKGBUILD
+@@ -3,7 +3,7 @@
+ pkgname=lib32-libarchive
+ _name="${pkgname#lib32-}"
+ pkgver=3.8.2
+-pkgrel=1
++pkgrel=2
+ pkgdesc="Multi-format archive and compression library - 32bit"
+ arch=(x86_64)
+ url="https://libarchive.org"
+@@ -66,7 +66,7 @@ prepare() {
  
  build() {
    local configure_options=(
@@ -11,7 +20,7 @@ index 7c79e25..0adb96a 100644
      --disable-bsdcat
      --disable-bsdcpio
      --disable-bsdtar
-@@ -55,15 +55,13 @@ build() {
+@@ -74,15 +74,13 @@ build() {
      --disable-static
      --libdir=/usr/lib32
      --libexecdir=/usr/lib32
@@ -30,7 +39,7 @@ index 7c79e25..0adb96a 100644
    export PKG_CONFIG_PATH='/usr/lib32/pkgconfig'
  
    cd $_name
-@@ -76,6 +74,6 @@ check() {
+@@ -95,6 +93,6 @@ check() {
  }
  
  package() {

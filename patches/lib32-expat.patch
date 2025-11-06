@@ -1,7 +1,16 @@
-diff --git a/PKGBUILD b/PKGBUILD
-index abeda25..1a10ad1 100644
---- a/PKGBUILD
-+++ b/PKGBUILD
+diff --git i/PKGBUILD w/PKGBUILD
+index 072f773..615840f 100644
+--- i/PKGBUILD
++++ w/PKGBUILD
+@@ -4,7 +4,7 @@
+ 
+ pkgname=lib32-expat
+ _name=${pkgname#lib32-}
+-pkgver=2.7.3
++pkgver=2.7.2
+ pkgrel=1
+ pkgdesc='An XML Parser library'
+ arch=(x86_64)
 @@ -31,13 +31,14 @@ build() {
      -D CMAKE_BUILD_TYPE=None
      -D CMAKE_INSTALL_LIBDIR=lib32
