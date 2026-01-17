@@ -1,0 +1,28 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 8694f0f..bbefe6e 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -49,12 +49,13 @@ prepare() {
+ build() {
+   cd ngtcp2/
+ 
+-  export CC='gcc -m32'
+-  export CXX='g++ -m32'
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
+   export PKG_CONFIG_PATH='/usr/lib32/pkgconfig'
+   ./configure \
+     --prefix=/usr \
+     --libdir=/usr/lib32 \
++    --includedir=/usr/include32 \
+     --with-libbrotlienc \
+     --with-libbrotlidec \
+     --with-gnutls \
+@@ -66,6 +67,6 @@ package() {
+   cd ngtcp2/
+ 
+   make DESTDIR="${pkgdir}" install
+-  rm -r "${pkgdir}"/usr/{include,share}
++  rm -r "${pkgdir}"/usr/share
+   install -D -m0644 COPYING -t "${pkgdir}/usr/share/licenses/${pkgname}"
+ }
