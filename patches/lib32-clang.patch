@@ -1,48 +1,43 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index 2af9e6b..0265b43 100644
+index 2c58809..96edcb6 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
-@@ -61,27 +61,33 @@ prepare() {
- build() {
-   cd "$srcdir/clang-$pkgver.src/build"
- 
--  export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
-+  export CC="armv7h-linux-gnueabihf-gcc"
-+  export CXX="armv7h-linux-gnueabihf-g++"
-+  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
-+
- 
-   local cmake_args=(
+@@ -74,25 +74,29 @@ build() {
      -G Ninja
      -DCMAKE_BUILD_TYPE=Release
--    -DCMAKE_INSTALL_PREFIX=/usr
+     -DCMAKE_INSTALL_PREFIX=/usr
 +    -DCMAKE_INSTALL_INCLUDEDIR=include32
 +    -DCMAKE_INSTALL_PREFIX=/usr/armv7h-linux-gnueabihf
+     -DCMAKE_INSTALL_DOCDIR=share/doc
      -DCMAKE_SKIP_RPATH=ON
-+    -DCLANG_INSTALL_PREFIX=/usr
      -DCLANG_DEFAULT_PIE_ON_LINUX=ON
      -DCLANG_LINK_CLANG_DYLIB=ON
--    -DCMAKE_CXX_FLAGS:STRING=-m32
--    -DCMAKE_C_FLAGS:STRING=-m32
      -DENABLE_LINKER_BUILD_ID=ON
-     -DLLVM_BUILD_DOCS=OFF
-     -DLLVM_BUILD_TESTS=OFF
--    -DLLVM_CONFIG="/usr/bin/llvm-config32"
-+    -DLLVM_INCLUDE_TESTS=OFF
+-    -DLLVM_CONFIG=llvm-config32
 +    -DLLVM_CONFIG="/usr/armv7h-linux-gnueabihf/bin/llvm-config"
 +    -DLLVM_TABLEGEN_EXE="/usr/armv7h-linux-gnueabihf/bin/llvm-tblgen"
      -DLLVM_ENABLE_RTTI=ON
-     -DLLVM_ENABLE_SPHINX=OFF
-     -DLLVM_EXTERNAL_LIT=/usr/bin/lit
+     -DLLVM_EXTERNAL_CLANG_TOOLS_EXTRA_SOURCE_DIR=
      -DLLVM_INCLUDE_DOCS=OFF
+     -DLLVM_INCLUDE_TESTS=OFF
 -    -DLLVM_LIBDIR_SUFFIX=32
      -DLLVM_LINK_LLVM_DYLIB=ON
+     -DLLVM_THIRD_PARTY_DIR="$srcdir/third-party-$pkgver.src"
 +    -DLLVM_TARGETS_TO_BUILD="arm"
 +    -DCMAKE_INSTALL_LIBDIR=/usr/armv7h-linux-gnueabihf/lib
-     -DLLVM_MAIN_SRC_DIR="$srcdir/llvm-$pkgver.src"
+     -DLLVM_PACKAGE_BUGREPORT=https://gitlab.archlinux.org/archlinux/packaging/packages/lib32-clang/-/issues
    )
  
-@@ -91,6 +97,9 @@ build() {
+-  export CFLAGS+=" -m32"
+-  export CXXFLAGS+=" -m32"
+-  export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   cmake .. "${cmake_args[@]}"
+   local distribution_components=$(_get_distribution_components | paste -sd\;)
+@@ -100,6 +104,9 @@ build() {
    cmake_args+=(-DLLVM_DISTRIBUTION_COMPONENTS="$distribution_components")
  
    cmake .. "${cmake_args[@]}"
@@ -52,7 +47,7 @@ index 2af9e6b..0265b43 100644
    ninja
  }
  
-@@ -98,7 +107,9 @@ package() {
+@@ -107,7 +114,9 @@ package() {
    cd clang-$pkgver.src/build
  
    DESTDIR="$pkgdir" ninja install-distribution

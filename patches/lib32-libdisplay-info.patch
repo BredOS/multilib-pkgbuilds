@@ -1,0 +1,22 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index 32fc43e..cc193dd 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -22,7 +22,7 @@ sha256sums=('6ae77cd937f9cf7d1321d35c116062c4911e8447010a6a713ac4286f7a9d5987'
+ validpgpkeys=('34FF9526CFEF0E97A340E2E40FDE7BE0E88F5E48')
+ 
+ build() {
+-	arch-meson --cross-file lib32 "$_archive" build
++	arch-meson --cross-file arm-lib32 "$_archive" build
+ 	ninja -C build
+ }
+ 
+@@ -32,7 +32,7 @@ check() {
+ 
+ package() {
+ 	DESTDIR="$pkgdir" ninja -C build install
+-	rm -rv "$pkgdir"/usr/{bin,include}
++	rm -rv "$pkgdir"/usr/bin
+ 
+ 	install -Dm0644 -t "$pkgdir/usr/share/licenses/$pkgname/" "$_archive/LICENSE"
+ }

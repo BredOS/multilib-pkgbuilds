@@ -1,0 +1,41 @@
+# Maintainer: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+# Maintainer: Laurent Carlier <lordheavym@archlinux.org>
+# Contributor: Cyano Hao <c@cyano.cn>
+
+pkgname=lib32-directx-headers
+pkgver=1.618.2
+pkgrel=1
+pkgdesc="DirectX headers for using D3D12"
+url="https://github.com/microsoft/DirectX-Headers"
+arch=(x86_64)
+license=(MIT)
+depends=()
+makedepends=(
+  git
+  meson
+)
+options=(!lto)
+source=("directx-headers::git+$url#tag=v$pkgver")
+b2sums=('15f8bc4b16483299e3f3da7250bd2f2fbedfdfb7d290cb899a3aca8f8f54e90f260f03c4392cef7d9177a2e3b04eefab80f7385f3d905a299cf90ee444bf922d')
+
+build() {
+  local meson_options=(
+    -D build-test=false
+    --cross-file arm-lib32
+  )
+
+  arch-meson directx-headers build "${meson_options[@]}"
+  meson compile -C build
+}
+
+package() {
+  meson install -C build --destdir "$pkgdir"
+
+  mv "$pkgdir"/usr/include{,32} -v
+
+  sed -i 's|/usr/include32|/usr/include|g' "$pkgdir"/usr/lib32/pkgconfig/DirectX-Headers.pc
+  install -Dm644 directx-headers/LICENSE \
+    -t "$pkgdir/usr/share/licenses/$pkgname"
+}
+
+# vim:set sw=2 sts=-1 et:

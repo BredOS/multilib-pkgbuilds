@@ -1,37 +1,38 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index 6645693..70aaaef 100644
+index e8264b3..93c08cf 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
-@@ -18,20 +18,22 @@ sha256sums=('e433d40b5b4bf2bc3c819e34d7bf6194937df4d74e2f8dee8012bd8fd69e7f8a')
- build() {
-   cd "SPIRV-Tools-${_tag}"
+@@ -30,6 +30,7 @@ build() {
+     -D BUILD_SHARED_LIBS=ON
+     -D CMAKE_BUILD_TYPE=Release
+     -D CMAKE_INSTALL_LIBDIR=lib32
++    -D CMAKE_INSTALL_INCLUDEDIR=include32
+     -D CMAKE_INSTALL_PREFIX=/usr
+     -D CMAKE_INSTALL_SYSCONFDIR=/etc
+     -D CMAKE_SKIP_INSTALL_RPATH=ON
+@@ -38,12 +39,12 @@ build() {
+     -D SPIRV_WERROR=OFF
+   )
  
--  export CC='gcc -m32'
--  export CXX='g++ -m32'
--  export PKG_CONFIG=i686-pc-linux-gnu-pkg-config
+-  export ASFLAGS+=" --32"
+-  export CFLAGS+=" -m32"
+-  export CXXFLAGS+=" -m32"
+-  export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
 +  export CC="armv7h-linux-gnueabihf-gcc"
 +  export CXX="armv7h-linux-gnueabihf-g++"
 +  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
  
-   cmake \
-       -Bbuild \
-       -GNinja \
-       -DCMAKE_INSTALL_PREFIX=/usr \
-       -DCMAKE_INSTALL_LIBDIR=lib32 \
-+      -DCMAKE_INSTALL_INCLUDEDIR=include32 \
-       -DCMAKE_BUILD_TYPE=None \
-       -DSPIRV_WERROR=Off \
-       -DBUILD_SHARED_LIBS=ON \
-       -DSPIRV_TOOLS_BUILD_STATIC=OFF \
-       -DSPIRV-Headers_SOURCE_DIR=/usr
+   cmake -S SPIRV-Tools -B build -G Ninja "${cmake_options[@]}"
 +  sed -i 's|-I/usr/include|-I/usr/include32|' build/build.ninja
    cmake --build build
  }
  
-@@ -44,5 +46,5 @@ package() {
-   cd "SPIRV-Tools-${_tag}"
+@@ -53,7 +54,7 @@ check() {
  
-   DESTDIR="${pkgdir}" cmake --install build
--  rm -r "${pkgdir}"/usr/{bin,include}
-+  rm -r "${pkgdir}"/usr/bin
+ package() {
+   DESTDIR="$pkgdir" cmake --install build
+-  rm -r "$pkgdir"/usr/{bin,include}
++  rm -r "$pkgdir"/usr/bin
  }
+ 
+ # vim:set sw=2 sts=-1 et:

@@ -1,37 +1,24 @@
 diff --git a/PKGBUILD b/PKGBUILD
-index 4c4f780..8ad8a6c 100644
+index 711b929..7ad45ca 100644
 --- a/PKGBUILD
 +++ b/PKGBUILD
-@@ -67,7 +67,9 @@ prepare() {
- build() {
-   cd llvm-$pkgver.src/build
- 
--  export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
-+  export CC="armv7h-linux-gnueabihf-gcc"
-+  export CXX="armv7h-linux-gnueabihf-g++"
-+  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
- 
-   # Build only minimal debug info to reduce size
-   CFLAGS+=' -g1'
-@@ -76,24 +78,25 @@ build() {
-   local cmake_args=(
-     -G Ninja
-     -DCMAKE_BUILD_TYPE=Release
--    -DCMAKE_CXX_FLAGS:STRING=-m32
--    -DCMAKE_C_FLAGS:STRING=-m32
--    -DCMAKE_INSTALL_PREFIX=/usr
+@@ -84,29 +84,33 @@ build() {
+     -DCMAKE_INSTALL_DOCDIR=share/doc
+     -DCMAKE_INSTALL_PREFIX=/usr
+     -DCMAKE_SKIP_RPATH=ON
+-    -DLLVM_BINUTILS_INCDIR=/usr/include
++    -DLLVM_BINUTILS_INCDIR=/usr/include32
 +    -DCMAKE_INSTALL_INCLUDEDIR=/usr/include32
 +    -DCMAKE_INSTALL_LIBDIR=/usr/lib32
 +    -DCMAKE_INSTALL_BINDIR=/usr/armv7h-linux-gnueabihf/bin/
 +    -DCMAKE_INSTALL_PREFIX=/usr/armv7h-linux-gnueabihf
-     -DCMAKE_SKIP_RPATH=ON
--    -DLLVM_BINUTILS_INCDIR=/usr/include
-+    -DLLVM_BINUTILS_INCDIR=/usr/include32
      -DLLVM_BUILD_DOCS=OFF
      -DLLVM_BUILD_LLVM_DYLIB=ON
+     -DLLVM_BUILD_TESTS=OFF
 -    -DLLVM_DEFAULT_TARGET_TRIPLE="i686-pc-linux-gnu"
 +    -DLLVM_DEFAULT_TARGET_TRIPLE="armv7h-linux-gnueabihf"
      -DLLVM_ENABLE_BINDINGS=OFF
+     -DLLVM_ENABLE_CURL=OFF
      -DLLVM_ENABLE_FFI=ON
      -DLLVM_ENABLE_RTTI=ON
      -DLLVM_ENABLE_SPHINX=OFF
@@ -45,9 +32,19 @@ index 4c4f780..8ad8a6c 100644
 -    -DLLVM_TARGET_ARCH:STRING=i686
 +    -DLLVM_TARGET_ARCH:STRING=arm
      -DLLVM_USE_PERF=ON
+     -DPACKAGE_BUGREPORT=https://gitlab.archlinux.org/archlinux/packaging/packages/lib32-llvm/-/issues
    )
  
-@@ -113,7 +116,9 @@ package_lib32-llvm() {
+-  export CFLAGS+=" -m32"
+-  export CXXFLAGS+=" -m32"
+-  export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
++  export CC="armv7h-linux-gnueabihf-gcc"
++  export CXX="armv7h-linux-gnueabihf-g++"
++  export PKG_CONFIG="armv7h-linux-gnueabihf-pkg-config"
+ 
+   cmake .. "${cmake_args[@]}"
+   local distribution_components=$(_get_distribution_components | paste -sd\;)
+@@ -124,15 +128,16 @@ package_lib32-llvm() {
    cd llvm-$pkgver.src/build
  
    DESTDIR="$pkgdir" ninja install-distribution
@@ -58,20 +55,13 @@ index 4c4f780..8ad8a6c 100644
    # The runtime library goes into lib32-llvm-libs
    mv "$pkgdir"/usr/lib32/lib{LLVM,LTO,Remarks}*.so* "$srcdir"
    mv -f "$pkgdir"/usr/lib32/LLVMgold.so "$srcdir"
-@@ -121,12 +126,12 @@ package_lib32-llvm() {
-   # Fix permissions of static libs
-   chmod -x "$pkgdir"/usr/lib32/*.a
  
--  mv "$pkgdir/usr/bin/llvm-config" "$pkgdir/usr/lib32/llvm-config"
-+  # mv "$pkgdir/usr/bin/llvm-config" "$pkgdir/usr/lib32/llvm-config"
  
--  rm -rf "$pkgdir"/usr/{bin,include,share/{doc,man,llvm,opt-viewer}}
+-  rm -rf "$pkgdir"/usr/{include,share/{doc,man,llvm,opt-viewer}}
+-  find "$pkgdir/usr/bin" -mindepth 1 -not -name llvm-config -delete
+-  mv "$pkgdir"/usr/bin/llvm-config{,32}
 +  rm -rf "$pkgdir"/usr/armv7h-linux-gnueabihf/share
- 
--  mkdir "$pkgdir"/usr/bin
--  mv "$pkgdir/usr/lib32/llvm-config" "$pkgdir/usr/bin/llvm-config32"
-+  # mkdir "$pkgdir"/usr/bin
-+  # mv "$pkgdir/usr/lib32/llvm-config" "$pkgdir/usr/bin/llvm-config32"
++  # mv "$pkgdir"/usr/bin/llvm-config{,32}
  
    install -Dm644 ../LICENSE.TXT "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
  }
